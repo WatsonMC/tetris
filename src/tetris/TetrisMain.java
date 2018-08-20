@@ -1,7 +1,9 @@
 package tetris;
 
+import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -17,6 +19,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.plaf.ColorUIResource;
 
 public class TetrisMain extends Canvas implements Runnable {
 
@@ -25,6 +28,9 @@ public class TetrisMain extends Canvas implements Runnable {
 	private static final Integer HS_WIDTH = 300;
 	private static final Integer HS_HEIGHT = 500;
 	private Image[] tetrisBlocks;
+	private final int BLOCK_SIZE = 25;
+	private TetrisGrid grid;
+	
 	
 	Controller cont;
 	Config conf;
@@ -32,22 +38,24 @@ public class TetrisMain extends Canvas implements Runnable {
 	public static void main(String [] args) {
 		//creating frame for game
 		JFrame frame = new JFrame("Tetris");	//creating the JFrame with the name Trtris
-		frame.setSize(WIDTH, HEIGHT);; 	//Setting size of the frame
+		frame.getContentPane().setPreferredSize(new Dimension(WIDTH, HEIGHT+25)); 	//Setting size of the frame, +25 added for menu bar, 4 for 2mm borders....
+		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	//Telling the frame to actually exit when the cross is pressed
 		frame.setLocationRelativeTo(null);	//sets frame in middle of screen
 		frame.setResizable(false);	// user cannot resize frame
-		
+		Dimension d = frame.getSize();
 		
 		TetrisMain tetrisMain = new TetrisMain();
-		frame.add(tetrisMain);
+		frame.getContentPane().add(tetrisMain, BorderLayout.CENTER);
 		frame.setLayout(null);
-		tetrisMain.setBounds(0,25,WIDTH,HEIGHT-25);
+		tetrisMain.setBounds(0,25,WIDTH,HEIGHT);	// starts at 25 to allow menu bar,4 for 2 pixel border....
 		
 		//tetrisMain.addKeyListener(tetrisMain);
 		//add menu bar
 		Config conf = new Config();
 		tetrisMain.conf = conf;
-	
+		
+		
 		tetrisMain.constructMenuBar(frame);
 		
 		frame.setVisible(true);
@@ -72,6 +80,7 @@ public class TetrisMain extends Canvas implements Runnable {
 			}
 			Graphics2D background = (Graphics2D) buff.getDrawGraphics(); //graphics2d is a fundamental class for rendering 2-d shapes. takes user space co-ordinates
 			render(background);
+			
 			buff.show(); 
 		}
 
@@ -96,6 +105,9 @@ public class TetrisMain extends Canvas implements Runnable {
 			System.exit(1);
 		}
 		
+		grid=  new TetrisGrid(WIDTH,HEIGHT-25,this.BLOCK_SIZE, this.tetrisBlocks);//-25 because menubar is 25 at top
+		
+		
 		
 	}
 	
@@ -109,14 +121,22 @@ public class TetrisMain extends Canvas implements Runnable {
 		//System.out.println(keys);
 	}
 	
+	
+	/**
+	 * drawings is done by passing around the graphics 2D object
+	 * @param g
+	 */
 	public void render(Graphics2D g) {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, WIDTH, HEIGHT);
+		g.setColor(Color.RED);
+		g.drawRect(0,0,WIDTH,HEIGHT);
 		g.setColor(Color.white);
 		g.setFont(new Font("Calibri", Font.PLAIN, 24));
 		g.drawString("tetris", WIDTH/2, HEIGHT/2);
 		g.drawImage(tetrisBlocks[0], 100, 100,25, 25,null);
 		g.drawImage(tetrisBlocks[1], 75, 100,25, 25,null);
+		grid.drawGrid(g);
 	}
 
 	
@@ -139,7 +159,7 @@ public class TetrisMain extends Canvas implements Runnable {
 				// creating menu bar
 				JMenuBar menuBar = new JMenuBar();
 				menuBar.setBounds(0,0,WIDTH,25);
-				frame.add(menuBar);
+				frame.getContentPane().add(menuBar,BorderLayout.CENTER);
 				
 				
 				//creating the menu options
