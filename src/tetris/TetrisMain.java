@@ -11,6 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferStrategy;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -19,7 +21,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.plaf.ColorUIResource;
 
 public class TetrisMain extends Canvas implements Runnable {
 
@@ -277,6 +278,33 @@ public class TetrisMain extends Canvas implements Runnable {
 		});
 		jbDeleteRows.setBounds(100,100,100,50);
 		testEnv.add(jbDeleteRows);
+		
+		JComboBox<String> shapeTypeBox = new JComboBox<>(new String[]{"line","S","Z","square", "L","J","T"});
+		Map<String, String> shapeSelectMap = new HashMap<>();
+		shapeSelectMap.put("line", "/line.txt");
+		shapeSelectMap.put("S", "/sshape.txt");
+		shapeSelectMap.put("Z", "/zshape.txt");
+		shapeSelectMap.put("square", "/square.txt");
+		shapeSelectMap.put("T", "/tee.txt");
+		shapeSelectMap.put("L", "/lshape.txt");
+		shapeSelectMap.put("J", "/jshape.txt");
+		
+		shapeTypeBox.setBounds(300,200,150,50);
+		testEnv.add(shapeTypeBox);
+		
+		JButton jbTestShape =  new JButton("testShapeConstructor");
+		jbTestShape.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("shape testing");
+				ShapeData s = new ShapeData("L", shapeSelectMap.get(shapeTypeBox.getSelectedItem()),0,3);
+				System.out.println("shape data created");
+				Block b = new Block(grid,s);
+				System.out.println("block created successfully");
+				grid.addBlock(b);
+			}
+		});
+		jbTestShape.setBounds(300,100,150,50);
+		testEnv.add(jbTestShape);
 
 		testEnv.setVisible(true);
 	}

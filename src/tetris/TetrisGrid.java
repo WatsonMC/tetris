@@ -84,11 +84,8 @@ public class TetrisGrid {
 	}
 	
 	
-
-
-
-
-public void drawGrid(Graphics2D g) {
+	
+	public void drawGrid(Graphics2D g) {
 		for(int x  = 0;x<this.WIDTH ;x++) {
 			for(int y = 0; y<this.HEIGHT;y++) {
 				// now draw colour of grid
@@ -205,6 +202,23 @@ public void drawGrid(Graphics2D g) {
 				}
 				grid[firstNonEmptyRow] = EMPTY_ROW;
 			}
+	}
+	
+	/**
+	 * Adds a block to the grid with its current position and shapedata 
+	 * @param block
+	 */
+	public void addBlock(Block block) {
+		//shape 
+		
+		for(int i= 0; i<4; i++) {
+			for(int j =0 ; j<4; j++) {
+				if(block.currentShapeData[i][j]){
+					grid[block.rowPosn+i][block.colPosn+j] = block.shape.colourIndex;
+				}
+			}
+		}
+		
 	}
 
 	
