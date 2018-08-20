@@ -32,6 +32,8 @@ public class TetrisMain extends Canvas implements Runnable {
 	private final int BLOCK_SIZE = 25;
 	private TetrisGrid grid;
 	
+	private Block testBlock;
+	
 	
 	private Controller cont;
 	private Config conf;
@@ -291,16 +293,19 @@ public class TetrisMain extends Canvas implements Runnable {
 		
 		shapeTypeBox.setBounds(300,200,150,50);
 		testEnv.add(shapeTypeBox);
-		
 		JButton jbTestShape =  new JButton("testShapeConstructor");
 		jbTestShape.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if(testBlock != null) {
+					//if block is already placed in screen, delete it
+					grid.removeBlock(testBlock);
+				}
 				System.out.println("shape testing");
 				ShapeData s = new ShapeData("L", shapeSelectMap.get(shapeTypeBox.getSelectedItem()),0,3);
 				System.out.println("shape data created");
-				Block b = new Block(grid,s);
+				testBlock = new Block(grid,s);
 				System.out.println("block created successfully");
-				grid.addBlock(b);
+				grid.addBlock(testBlock);
 			}
 		});
 		jbTestShape.setBounds(300,100,150,50);

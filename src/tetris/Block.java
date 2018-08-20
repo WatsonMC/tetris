@@ -1,7 +1,7 @@
 package tetris;
 
 import java.awt.Dimension;
-t statuimport java.util.Random;
+import java.util.Random;
 
 public class Block {
 	int rowPosn;	// holds the row number reference of the blocks position

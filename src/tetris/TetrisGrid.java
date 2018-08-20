@@ -207,10 +207,11 @@ public class TetrisGrid {
 	/**
 	 * Adds a block to the grid with its current position and shapedata 
 	 * @param block
+	 * addBlock method assumes that the placement of block
+	 * has already been checked and is okay to add in given loc
 	 */
 	public void addBlock(Block block) {
 		//shape 
-		
 		for(int i= 0; i<4; i++) {
 			for(int j =0 ; j<4; j++) {
 				if(block.currentShapeData[i][j]){
@@ -220,6 +221,20 @@ public class TetrisGrid {
 		}
 		
 	}
-
+	
+	/**
+	 * Deletes block from existing location in grid. bloc spaces become blank
+	 * @param block
+	 * block to be deleted from grid. assumes block already exists at that loc
+	 */
+	public void removeBlock(Block block) {
+		for(int i = 0; i<4; i++) {
+			for (int j = 0; j<4;j++) {
+				if(block.currentShapeData[i][j]) {
+					grid[block.rowPosn+i][block.colPosn+j] = -1;
+				}
+			}
+		}
+	}
 	
 }
