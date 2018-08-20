@@ -5,41 +5,43 @@ import java.awt.event.KeyListener;
 
 public class Controller implements KeyListener {
 	TetrisMain game;
+	private Config conf;
 	private boolean left,right,down,up, pause;
 	
-	public Controller(TetrisMain game) {
+	public Controller(TetrisMain game, Config conf) {
 		//constructed by passing the actual game object
 		this.game = game;
+		this.conf = conf;
 	}
 	public void  keyPressed(KeyEvent e) {
 		//System.out.println("yes fuckwit a key was typed");
 		
 		
 		//get presed key
-		String pressedKey = e.getKeyText(e.getKeyCode());
+		String pressedKey = KeyEvent.getKeyText(e.getKeyCode());
 		//System.out.println(pressedKey);
 		
 		//Set flags  true when key released
-		if(pressedKey.equals(Config.getLeft())) {
+		if(pressedKey.equals(conf.getLeft())) {
 			System.out.println("Left pressed");
 			left = true;
 		}
-		else if(pressedKey.equals(Config.getRight())) {
+		else if(pressedKey.equals(conf.getRight())) {
 			System.out.println("Right pressed");
 			right = true;
 
 		}
-		else if(pressedKey.equals(Config.getUp())) {
+		else if(pressedKey.equals(conf.getUp())) {
 			System.out.println("Up pressed");
 			up = true;
 
 		}
-		else if(pressedKey.equals(Config.getDown())) {
+		else if(pressedKey.equals(conf.getDown())) {
 			System.out.println("Down pressed");
 			down = true;
 
 		}
-		else if(pressedKey.equals(Config.getPause())) {
+		else if(pressedKey.equals(conf.getPause())) {
 			System.out.println("Pause pressed");
 			pause = true;
 
@@ -52,30 +54,30 @@ public class Controller implements KeyListener {
 	 * Occurs third in order of event generation for key presses
 	 */
 	public void  keyReleased(KeyEvent e) {
-		String releasedKey = e.getKeyText(e.getKeyCode());
+		String releasedKey = KeyEvent.getKeyText(e.getKeyCode());
 		//System.out.println(releasedKey);
 		
 		//set flags false when keys are released
-		if(releasedKey.equals(Config.getLeft())) {
+		if(releasedKey.equals(conf.getLeft())) {
 			System.out.println("Left released");
 			left = false;
 		}
-		else if(releasedKey.equals(Config.getRight())) {
+		else if(releasedKey.equals(conf.getRight())) {
 			System.out.println("Right released");
 			right = false;
 
 		}
-		else if(releasedKey.equals(Config.getUp())) {
+		else if(releasedKey.equals(conf.getUp())) {
 			System.out.println("Up released");
 			up = false;
 
 		}
-		else if(releasedKey.equals(Config.getDown())) {
+		else if(releasedKey.equals(conf.getDown())) {
 			System.out.println("Down released");
 			down = false;
 
 		}
-		else if(releasedKey.equals(Config.getPause())) {
+		else if(releasedKey.equals(conf.getPause())) {
 			System.out.println("Pause pressed");
 			pause = false;
 

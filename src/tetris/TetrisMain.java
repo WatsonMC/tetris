@@ -32,8 +32,8 @@ public class TetrisMain extends Canvas implements Runnable {
 	private TetrisGrid grid;
 	
 	
-	Controller cont;
-	Config conf;
+	private Controller cont;
+	private Config conf;
 
 	public static void main(String [] args) {
 		//creating frame for game
@@ -48,7 +48,9 @@ public class TetrisMain extends Canvas implements Runnable {
 		TetrisMain tetrisMain = new TetrisMain();
 		frame.getContentPane().add(tetrisMain, BorderLayout.CENTER);
 		frame.setLayout(null);
-		tetrisMain.setBounds(0,25,WIDTH,HEIGHT);	// starts at 25 to allow menu bar,4 for 2 pixel border....
+		tetrisMain.setPreferredSize(new Dimension(WIDTH, HEIGHT+25));	// set preffered size then pack instead of setbounds alone, allows removal of border
+		
+		tetrisMain.setBounds(0,25,WIDTH,HEIGHT);	// starts at 25 to allow menu bar,
 		
 		//tetrisMain.addKeyListener(tetrisMain);
 		//add menu bar
@@ -57,7 +59,7 @@ public class TetrisMain extends Canvas implements Runnable {
 		
 		
 		tetrisMain.constructMenuBar(frame);
-		
+		frame.pack();
 		frame.setVisible(true);
 		
 		tetrisMain.start();
@@ -88,7 +90,7 @@ public class TetrisMain extends Canvas implements Runnable {
 	
 	public void init() {
 		
-		Controller  cont = new Controller(this);
+		Controller  cont = new Controller(this,this.conf);
 		this.cont = cont;
 		
 		this.addKeyListener(cont);	//The keylistener for this canvas is going to be exclusively held in the controller class
@@ -105,7 +107,7 @@ public class TetrisMain extends Canvas implements Runnable {
 			System.exit(1);
 		}
 		
-		grid=  new TetrisGrid(WIDTH,HEIGHT-25,this.BLOCK_SIZE, this.tetrisBlocks);//-25 because menubar is 25 at top
+		grid=  new TetrisGrid(WIDTH,HEIGHT,this.BLOCK_SIZE, this.tetrisBlocks);
 		
 		
 		
@@ -129,8 +131,6 @@ public class TetrisMain extends Canvas implements Runnable {
 	public void render(Graphics2D g) {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, WIDTH, HEIGHT);
-		g.setColor(Color.RED);
-		g.drawRect(0,0,WIDTH,HEIGHT);
 		g.setColor(Color.white);
 		g.setFont(new Font("Calibri", Font.PLAIN, 24));
 		g.drawString("tetris", WIDTH/2, HEIGHT/2);
@@ -265,9 +265,19 @@ public class TetrisMain extends Canvas implements Runnable {
 		testEnv.setLayout(null);
 		testEnv.setLocationRelativeTo(null);
 		testEnv.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		Controller cont = new Controller(this);
+		Controller cont = new Controller(this, this.conf);
 		testEnv.addKeyListener(cont);
 		
+		JButton jbDeleteRows =  new JButton("Clear full rows");
+		jbDeleteRows.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Successfully pressed deleterow button");
+				grid.clearFullLines();
+			}
+		});
+		jbDeleteRows.setBounds(100,100,100,50);
+		testEnv.add(jbDeleteRows);
+
 		testEnv.setVisible(true);
 	}
 	
@@ -304,28 +314,28 @@ public class TetrisMain extends Canvas implements Runnable {
 		int comboWidth = 100;
 		int comboHeight = 25;
 		
-		JComboBox leftKeySelection = new JComboBox(keyList);
+		JComboBox<String> leftKeySelection = new JComboBox<>(keyList);
 		leftKeySelection.setSelectedItem(conf.getLeft());
 		leftKeySelection.setSize(comboWidth,comboHeight);
 		leftKeySelection.setBounds(100, 25, comboWidth,comboHeight);
 		
 		
-		JComboBox rightKeySelection = new JComboBox(keyList);
+		JComboBox<String> rightKeySelection = new JComboBox<>(keyList);
 		rightKeySelection.setSelectedItem(conf.getRight());
 		rightKeySelection.setSize(comboWidth,comboHeight);
 		rightKeySelection.setBounds(300, 25, comboWidth,comboHeight);
 		
-		JComboBox upKeySelection = new JComboBox(keyList);
+		JComboBox<String> upKeySelection = new JComboBox<>(keyList);
 		upKeySelection.setSelectedItem(conf.getUp());
 		upKeySelection.setSize(comboWidth,comboHeight);
 		upKeySelection.setBounds(100, 75, comboWidth,comboHeight);
 		
-		JComboBox downKeySelection = new JComboBox(keyList);
+		JComboBox<String> downKeySelection = new JComboBox<>(keyList);
 		downKeySelection.setSelectedItem(conf.getDown());
 		downKeySelection.setSize(comboWidth,comboHeight);
 		downKeySelection.setBounds(300, 75, comboWidth,comboHeight);
 		
-		JComboBox pauseKeySelection = new JComboBox(keyList);
+		JComboBox<String> pauseKeySelection = new JComboBox<>(keyList);
 		pauseKeySelection.setSelectedItem(conf.getPause());
 		pauseKeySelection.setSize(comboWidth,comboHeight);
 		pauseKeySelection.setBounds(200, 150, comboWidth,comboHeight);

@@ -57,7 +57,7 @@ public class Config {
 	 * @return
 	 * String copy of the key for left
 	 */
-	public static String getLeft() {
+	public  String getLeft() {
 		return new String(LEFT_KEY);
 	}
 	
@@ -66,7 +66,7 @@ public class Config {
 	 * @return
 	 * String copy of the key for right
 	 */
-	public static  String getRight() {
+	public   String getRight() {
 		return new String(RIGHT_KEY);
 	}
 	
@@ -75,7 +75,7 @@ public class Config {
 	 * @return
 	 * String copy of the key for up
 	 */
-	public static String getUp() {
+	public  String getUp() {
 		return new String(UP_KEY);
 	}
 	
@@ -84,7 +84,7 @@ public class Config {
 	 * @return
 	 * String copy of the key for down
 	 */
-	public static String getDown() {
+	public  String getDown() {
 		return new String(DOWN_KEY);
 	}
 	
@@ -93,7 +93,7 @@ public class Config {
 	 * @return
 	 * String copy of the key for pause
 	 */	
-	public static String getPause() {
+	public  String getPause() {
 		return new String(PAUSE);
 	}
 	
