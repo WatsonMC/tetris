@@ -47,6 +47,18 @@ public class TetrisGrid {
 	}
 	
 	
+	/**
+	 * Check rep function for grid class
+	 * @return
+	 * boolean result determining whether the grid calss rep has been maintained or not
+	 */
+	private boolean checkRep() {
+		//check that there are no disallowed values in grid storage
+		// check that size and width variables are acceptable (grid can actually be made from the given sizes)
+		return true;
+	}
+	
+	
 	public void drawGrid(Graphics2D g) {
 		for(int x  = 0;x<this.WIDTH ;x++) {
 			for(int y = 0; y<this.HEIGHT;y++) {
