@@ -16,6 +16,8 @@ public class TetrisGrid {
 	
 	private Image[] tetrisBlocks;
 	
+	public Block currentBlock;
+	
 	/**REP 
 	 * Grid:
 	 * Grid is an integer 2d array representing XY points in the tetris play screen
@@ -212,6 +214,7 @@ public class TetrisGrid {
 	 */
 	public void addBlock(Block block) {
 		//shape 
+		currentBlock = block;
 		for(int i= 0; i<4; i++) {
 			for(int j =0 ; j<4; j++) {
 				if(block.currentShapeData[i][j]){
@@ -235,6 +238,51 @@ public class TetrisGrid {
 				}
 			}
 		}
+	}
+	
+	
+	/** 
+	 * Handles checking entire legitimacy of move
+	 * Will return true only if move is allowed:
+	 * - Does not move a part of the block off the play screen
+	 * - Does not move part of a block into a different block
+	 * 
+	 * @param block 
+	 * Block object to be checkd. block object does not need to be drawn already
+	 * @param rowNumber
+	 * Row number for insertion point of block
+	 * @param columnNumber
+	 * Column number for insertion point of block
+	 * @return
+	 * TRUE = move is allowed
+	 * FALSE  = move is not allowed
+	 */
+	public boolean checkMove(Block block, int rowNumber, int columnNumber) {
+		//TODO FINISH CHECK MOVE FUNCTIONALITY
+		// check if inserton coord are out of range	// THIS DOES NOT MATTER, INSERTION POINT IS BELOW 
+		//if(rowNumber< 0 || rowNumber> LAST_ROW
+			//	|| columnNumber<0|| columnNumber> LAST_COL) {
+			//return false;
+		//}
+		// reached hear means 
+		
+		
+		//TODO Implement automated testing for this method
+		//TODO move to seperate function
+		//Check each of the 16 squares to see if they are in range
+		for(int i = 0; i<4; i++) {
+			for(int j =0; j<4;j++) {
+				if(block.currentShapeData[i][j]) {
+					if(rowNumber+i<0 || rowNumber+i>LAST_ROW
+							||columnNumber+j<0||columnNumber+j>LAST_COL) {
+						//Position is out of range
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+		
 	}
 	
 }

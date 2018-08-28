@@ -31,6 +31,7 @@ public class TetrisMain extends Canvas implements Runnable {
 	private Image[] tetrisBlocks;
 	private final int BLOCK_SIZE = 25;
 	private TetrisGrid grid;
+	private Block currentBlock;
 	
 	private Block testBlock;
 	
@@ -308,8 +309,21 @@ public class TetrisMain extends Canvas implements Runnable {
 				grid.addBlock(testBlock);
 			}
 		});
+		
 		jbTestShape.setBounds(300,100,150,50);
 		testEnv.add(jbTestShape);
+		
+		JButton moveLeft = new JButton("MoveLeft");
+				
+		moveLeft.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("moving current block Left");
+				grid.currentBlock.moveLeft();
+			}
+		});
+		moveLeft.setBounds(100,200,100,50);
+		testEnv.add(moveLeft);
+
 
 		testEnv.setVisible(true);
 	}
