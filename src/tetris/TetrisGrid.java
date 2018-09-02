@@ -282,6 +282,26 @@ public class TetrisGrid {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Getter method for current block being moved by grid
+	 * @return
+	 * returns the grids current block 
+	 */
+	public Block getCurrentBlock() {
+		return this.currentBlock;
+	}
+	
+	/**
+	 * Method for checking if the grid has a block at current or not
+	 * Returns true iff the grid has a block drawn
+	 */
+	public boolean checkBlock() {
+		if(currentBlock == null) {
+			return false;
+		}
+		return true;
 		
 	}
 	

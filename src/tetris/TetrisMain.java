@@ -13,6 +13,10 @@ import java.awt.image.BufferStrategy;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -111,10 +115,10 @@ public class TetrisMain extends Canvas implements Runnable {
 			System.exit(1);
 		}
 		
+		//Initialize the grid object for the game
 		grid=  new TetrisGrid(WIDTH,HEIGHT,this.BLOCK_SIZE, this.tetrisBlocks);
-		
-		
-		
+		// Initialize the block controller for the game
+		BlockController blockCtrl = new BlockController(this);
 	}
 	
 	public void update() {
@@ -125,6 +129,7 @@ public class TetrisMain extends Canvas implements Runnable {
 				", Up: " + cont.getUpFlag() +
 				", Pause: " + cont.getPauseFlag();
 		//System.out.println(keys);
+		
 	}
 	
 	
@@ -324,7 +329,14 @@ public class TetrisMain extends Canvas implements Runnable {
 		moveLeft.setBounds(100,200,100,50);
 		testEnv.add(moveLeft);
 
-
+		JButton deleteCurrentBlock  = new JButton("Delete current block");
+		deleteCurrentBlock.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				grid.currentBlock = null;
+			}
+		});
+		deleteCurrentBlock.setBounds(150,400,150,50);
+		testEnv.add(deleteCurrentBlock);
 		testEnv.setVisible(true);
 	}
 	
@@ -341,20 +353,6 @@ public class TetrisMain extends Canvas implements Runnable {
 		configMenu.setLayout(null);
 		configMenu.setLocationRelativeTo(null);
 		configMenu.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		
-		
-		JButton okay = new JButton("OKAY");
-		okay.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("Saving button config");
-				//TODO code to save config file for buttons
-				configMenu.dispose();
-				
-			}
-		});
-		
-		okay.setBounds(200,225, 200,50);
-		okay.setSize(100,25);
 		
 		String[] keyList = conf.getKeyList();
 		
@@ -387,6 +385,19 @@ public class TetrisMain extends Canvas implements Runnable {
 		pauseKeySelection.setSize(comboWidth,comboHeight);
 		pauseKeySelection.setBounds(200, 150, comboWidth,comboHeight);
 		
+		JButton okay = new JButton("OKAY");
+		okay.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Saving button config");
+				//TODO code to save config file for buttons
+				
+				configMenu.dispose();
+				
+			}
+		});
+		okay.setBounds(200,225, 200,50);
+		okay.setSize(100,25);
+		
 		configMenu.add(okay);
 		configMenu.add(downKeySelection);
 		configMenu.add(upKeySelection);
@@ -396,7 +407,16 @@ public class TetrisMain extends Canvas implements Runnable {
 		
 		configMenu.setVisible(true);
 		
+		
 	}
 	
+	/**
+	 * Getter method for grid object of game
+	 * @return
+	 * Returns grid object in game
+	 */
+	public TetrisGrid getGrid() {
+		return this.grid;
+	}
 	
 }

@@ -25,26 +25,27 @@ public class Controller implements KeyListener {
 		if(pressedKey.equals(conf.getLeft())) {
 			System.out.println("Left pressed");
 			left = true;
+			game.getGrid().getCurrentBlock().moveLeft();
 		}
 		else if(pressedKey.equals(conf.getRight())) {
 			System.out.println("Right pressed");
 			right = true;
+			game.getGrid().getCurrentBlock().moveRight();
 
 		}
 		else if(pressedKey.equals(conf.getUp())) {
 			System.out.println("Up pressed");
 			up = true;
-
+			game.getGrid().getCurrentBlock().moveUp();
 		}
 		else if(pressedKey.equals(conf.getDown())) {
 			System.out.println("Down pressed");
 			down = true;
-
+			game.getGrid().getCurrentBlock().moveDown();
 		}
 		else if(pressedKey.equals(conf.getPause())) {
 			System.out.println("Pause pressed");
 			pause = true;
-
 		}
 
 	}

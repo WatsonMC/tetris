@@ -83,6 +83,41 @@ public class Block {
 		}
 	}
 	
+	public void moveRight() {
+		if(!drawn) {
+			System.out.println("MoveRight command given to block not yet drawn");
+			System.exit(1);
+		}
+		if(grid.checkMove(this, this.rowPosn, this.colPosn+1)){
+			grid.removeBlock(this);
+			this.colPosn+=1;
+			grid.addBlock(this);
+		}
+	}
+	
+	public void moveDown() {
+		if(!drawn) {
+			System.out.println("MoveDown command given to block not yet drawn");
+			System.exit(1);
+		}
+		if(grid.checkMove(this, this.rowPosn+1, this.colPosn)){
+			grid.removeBlock(this);
+			this.rowPosn+=1;
+			grid.addBlock(this);
+		}
+	}
+	public void moveUp() {
+		if(!drawn) {
+			System.out.println("MoveDown command given to block not yet drawn");
+			System.exit(1);
+		}
+		if(grid.checkMove(this, this.rowPosn-1, this.colPosn)){
+			grid.removeBlock(this);
+			this.rowPosn-=1;
+			grid.addBlock(this);
+		}
+	}
+	
 	
 		
 }

@@ -17,7 +17,7 @@ public class Config {
 	private static String PAUSE = "P";	//key to move
 	
 	private static String[] possibleKeys = {};
-	
+	//TODO cjamge keylist into a key map, mapping display strings to key selection strings, then use selections to set key controls
 	public Config() {
 		//get usable keys
 		Field[] fields = java.awt.event.KeyEvent.class.getDeclaredFields();
