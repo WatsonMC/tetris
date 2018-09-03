@@ -305,4 +305,8 @@ public class TetrisGrid {
 		
 	}
 	
+	public int getWidth() {
+		return this.WIDTH;
+	}
+	
 }

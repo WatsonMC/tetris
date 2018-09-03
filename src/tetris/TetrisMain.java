@@ -35,9 +35,8 @@ public class TetrisMain extends Canvas implements Runnable {
 	private Image[] tetrisBlocks;
 	private final int BLOCK_SIZE = 25;
 	private TetrisGrid grid;
-	private Block currentBlock;
-	
-	private Block testBlock;
+	private RandomBlockGenerator blockGenerator;
+	private Block testBlock;	//testing
 	
 	
 	private Controller cont;
@@ -98,9 +97,12 @@ public class TetrisMain extends Canvas implements Runnable {
 	
 	public void init() {
 		
+		//create the controller object
 		Controller  cont = new Controller(this,this.conf);
 		this.cont = cont;
-		
+		//create the block generator object
+		RandomBlockGenerator b= new RandomBlockGenerator();
+		this.blockGenerator = b;
 		this.addKeyListener(cont);	//The keylistener for this canvas is going to be exclusively held in the controller class
 		
 		requestFocus();

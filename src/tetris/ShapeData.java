@@ -20,7 +20,7 @@ public class ShapeData {
 	public static final ShapeData sshape = new ShapeData("sshape", "/sshape.txt",0,4);
 	public static final ShapeData zshape = new ShapeData("zshape", "/zshape.txt",0,5);
 	public static final ShapeData square = new ShapeData("square", "/square.txt",0,6);
-	public static final ShapeData tee = new ShapeData("tee", "/tee.txt",0,7);
+	public static final ShapeData tee = new ShapeData("tee", "/tee.txt",0,0);
 	
 	/**REP
 	 * - Default state 
@@ -75,6 +75,5 @@ public class ShapeData {
 	public void setColour(int colourIndex) {
 		this.colourIndex = colourIndex;
 	}
-	
 	
 }

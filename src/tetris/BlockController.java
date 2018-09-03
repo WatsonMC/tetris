@@ -30,7 +30,9 @@ public class BlockController {
 				if(!game.getGrid().checkBlock()) {
 					insertNewBlock();
 				}
-				moveBlock();
+				else{
+					moveBlock();
+				}
 			}
 		};
 		ScheduledFuture<?> lockMvmntHandler = scheduler.scheduleAtFixedRate(blockMvmnt, 1, 1, TimeUnit.SECONDS );
@@ -50,9 +52,8 @@ public class BlockController {
 	public void insertNewBlock() {
 		//Select the block type to be added
 		//Create block
-		Block newBlock  = new Block(game.getGrid(), insertRow-1,  insertCol[insertColCycler], ShapeData.jshape);
+		Block newBlock  = RandomBlockGenerator.getRandomBlock(game.getGrid());
 		game.getGrid().addBlock(newBlock);
-		insertColCycler = (insertColCycler+1)%insertCol.length;
 		
 		System.out.println("block created");
 		//Add block to screen
