@@ -36,6 +36,7 @@ public class Controller implements KeyListener {
 		else if(pressedKey.equals(conf.getUp())) {
 			System.out.println("Up pressed");
 			up = true;
+			//TODO change to rotate
 			game.getGrid().getCurrentBlock().moveUp();
 		}
 		else if(pressedKey.equals(conf.getDown())) {

@@ -10,7 +10,7 @@ public class TetrisGrid {
 	private int LAST_COL;	// integer y co-ord representing final placement position
 	private int[][] grid;		//x,y representation of tetris grid points
 	private final int GRID_SIZE;	// defined grid size
-	
+	private BlockCollisionDetector blockCollisionDetector;
 	private int[] EMPTY_ROW;
 	private int emptyRowSum;
 	
@@ -29,6 +29,8 @@ public class TetrisGrid {
 		this.HEIGHT = height/gridSize;
 		this.tetrisBlocks = tetrisBlocks;
 		this.GRID_SIZE  = gridSize;
+		
+		this.blockCollisionDetector = new BlockCollisionDetector(this);
 		
 		grid =  new int[this.HEIGHT][this.WIDTH]; //final block position at height-1 and width -1
 		this.EMPTY_ROW = new int[this.WIDTH];
@@ -225,22 +227,6 @@ public class TetrisGrid {
 		
 	}
 	
-	/**
-	 * Deletes block from existing location in grid. bloc spaces become blank
-	 * @param block
-	 * block to be deleted from grid. assumes block already exists at that loc
-	 */
-	public void removeBlock(Block block) {
-		for(int i = 0; i<4; i++) {
-			for (int j = 0; j<4;j++) {
-				if(block.currentShapeData[i][j]) {
-					grid[block.rowPosn+i][block.colPosn+j] = -1;
-				}
-			}
-		}
-	}
-	
-	
 	/** 
 	 * Handles checking entire legitimacy of move
 	 * Will return true only if move is allowed:
@@ -268,7 +254,7 @@ public class TetrisGrid {
 		
 		
 		//TODO Implement automated testing for this method
-		//TODO move to seperate function
+		//TODO move to seperate function -> in blockCollisionDetector
 		//Check each of the 16 squares to see if they are in range
 		for(int i = 0; i<4; i++) {
 			for(int j =0; j<4;j++) {
@@ -281,9 +267,30 @@ public class TetrisGrid {
 				}
 			}
 		}
+		//check collision with other blocks
+		if(blockCollisionDetector.checkCollision(block, rowNumber, columnNumber)) {
+			return false;
+		}
 		return true;
 	}
 
+
+	/**
+	 * Deletes block from existing location in grid. bloc spaces become blank
+	 * @param block
+	 * block to be deleted from grid. assumes block already exists at that loc
+	 */
+	public void removeBlock(Block block) {
+		for(int i = 0; i<4; i++) {
+			for (int j = 0; j<4;j++) {
+				if(block.currentShapeData[i][j]) {
+					grid[block.rowPosn+i][block.colPosn+j] = -1;
+				}
+			}
+		}
+	}
+	
+	
 	/**
 	 * Getter method for current block being moved by grid
 	 * @return
@@ -307,6 +314,18 @@ public class TetrisGrid {
 	
 	public int getWidth() {
 		return this.WIDTH;
+	}
+	
+	/*
+	 * returns true of the given coordinates in the grid represent a currently occupied position
+	 */
+	public boolean checkGridPositionAvailable(int row, int col) {
+		//grid position is occupied
+		if(grid[row][col]!=-1) {
+			return false;
+		}
+		//grid position availabe
+		return true;
 	}
 	
 }

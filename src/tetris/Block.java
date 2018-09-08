@@ -1,7 +1,6 @@
 package tetris;
 
-import java.awt.Dimension;
-import java.util.Random;
+import java.util.List;
 
 public class Block {
 	int rowPosn;	// holds the row number reference of the blocks position
@@ -65,6 +64,7 @@ public class Block {
 		drawn = true;
 	}
 	
+	
 	/**
 	 * Method to move block left from current location by 1 unit
 	 * If block is not already on grid, will add it in a position 1 left of initial positions
@@ -76,9 +76,13 @@ public class Block {
 			System.out.println("Moveleft command given to block not yet drawn");
 			System.exit(1);
 		}
+		//remove block, check new location, then reinsert in old or new location
+		grid.removeBlock(this);
 		if(grid.checkMove(this, this.rowPosn, this.colPosn-1)){
-			grid.removeBlock(this);
 			this.colPosn-=1;
+			grid.addBlock(this);
+		}
+		else {
 			grid.addBlock(this);
 		}
 	}
@@ -88,9 +92,12 @@ public class Block {
 			System.out.println("MoveRight command given to block not yet drawn");
 			System.exit(1);
 		}
+		grid.removeBlock(this);
 		if(grid.checkMove(this, this.rowPosn, this.colPosn+1)){
-			grid.removeBlock(this);
 			this.colPosn+=1;
+			grid.addBlock(this);
+		}
+		else {
 			grid.addBlock(this);
 		}
 	}
@@ -100,9 +107,12 @@ public class Block {
 			System.out.println("MoveDown command given to block not yet drawn");
 			System.exit(1);
 		}
+		grid.removeBlock(this);
 		if(grid.checkMove(this, this.rowPosn+1, this.colPosn)){
-			grid.removeBlock(this);
 			this.rowPosn+=1;
+			grid.addBlock(this);
+		}
+		else {
 			grid.addBlock(this);
 		}
 	}

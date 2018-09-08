@@ -103,6 +103,7 @@ public class TetrisMain extends Canvas implements Runnable {
 		//create the block generator object
 		RandomBlockGenerator b= new RandomBlockGenerator();
 		this.blockGenerator = b;
+		
 		this.addKeyListener(cont);	//The keylistener for this canvas is going to be exclusively held in the controller class
 		
 		requestFocus();
@@ -417,7 +418,7 @@ public class TetrisMain extends Canvas implements Runnable {
 	 * @return
 	 * Returns grid object in game
 	 */
-	public TetrisGrid getGrid() {
+	protected TetrisGrid getGrid() {
 		return this.grid;
 	}
 	
