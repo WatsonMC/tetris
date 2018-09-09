@@ -7,11 +7,6 @@ import java.util.concurrent.TimeUnit;
 
 public class BlockController {
 	private TetrisMain game;
-	private int insertRow = 0;
-	private int[] insertCol = {1,5,10,7};
-	private int insertColCycler=0;
-	private String[] shapeData = {"line","lshape","jshape","zshape","sshape","square","tee"};
-	private int shapeDataCycler = 0;
 	public static final ShapeData line = new ShapeData("line", "/line.txt",0,1);
 	public static final ShapeData lshape = new ShapeData("lshape", "/lshape.txt",0,2);
 	public static final ShapeData jshape = new ShapeData("jshape", "/jshape.txt",0,3);
@@ -27,36 +22,70 @@ public class BlockController {
 		
 		Runnable blockMvmnt =  new Runnable() {
 			public void run() {
-				if(!game.getGrid().checkBlock()) {
+				if(!game.getGrid().checkGridHasBlock()) {
 					insertNewBlock();
+					System.out.println("new block added to game");
 				}
 				else{
 					moveBlock();
 				}
 			}
 		};
-		ScheduledFuture<?> lockMvmntHandler = scheduler.scheduleAtFixedRate(blockMvmnt, 1, 1, TimeUnit.SECONDS );
+		ScheduledFuture<?> lockMvmntHandler = scheduler.scheduleAtFixedRate(blockMvmnt, 1000, game.gameSpeed, TimeUnit.MILLISECONDS );
 		
 	}
 	
 	/**
 	 * Attempts to mvoe the current block of the game down
 	 */
-	public void moveBlock() {
-		System.out.println("it's workign");
+	private void moveBlock() {
 		
 		game.getGrid().getCurrentBlock().moveDown();
 	}
 	
 	
-	public void insertNewBlock() {
+	private void insertNewBlock() {
 		//Select the block type to be added
 		//Create block
 		Block newBlock  = RandomBlockGenerator.getRandomBlock(game.getGrid());
-		game.getGrid().addBlock(newBlock);
-		
-		System.out.println("block created");
+		if(game.getGrid().checkMove(newBlock, newBlock.getRow(), newBlock.getCol())) {
+			game.getGrid().addBlock(newBlock);
+			System.out.println("block created");
+		}else {
+			System.out.println("randomly generated block could not be inserted at target position");
+			System.out.println("Will now cycle through possible locations to find a viable insertion point");
+			if(findBlockInsertionLocation(newBlock)) {
+				game.getGrid().addBlock(newBlock);
+			}else {
+				//game over
+				System.out.println("Game Over");
+			}
+		}
 		//Add block to screen
-		
+	}
+	
+	/**
+	 * Method to attempt all possible insertion locations for the new Block.
+	 * Will cycle through all of the possible columns the block could be inserted into
+	 * Assigns the correct col and row number if position found, and returns true
+	 * else returns false
+	 * @param block
+	 * block which we are going to try to insert
+	 * @return
+	 * TRUE if block was successfully inserted, col and row number of new insertion point assigned
+	 * FALSE if block could not be inserted anywhere, game over scrub.
+	 */
+	private boolean findBlockInsertionLocation(Block block) {
+		int width = game.getGrid().getWidth();
+		int colPos = block.getCol();
+		for (int i = 1;i<width ;i++) {
+			colPos = (colPos + i) % width;
+			if(game.getGrid().checkMove(block, block.rowPosn,colPos)) {
+				//pos found
+				block.setCol(colPos);
+				return true;
+			}
+		}
+		return false;
 	}
 }

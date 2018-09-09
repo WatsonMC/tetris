@@ -1,0 +1,17 @@
+Game mechanics:
+- pause game functionality
+
+
+Game flow:
+- New game functionality
+- Game over functionality
+- Highscore functionality
+
+
+Visual:
+- Game sidebar
+	- next block window
+	- current score
+
+Misc:
+- Make config buttons actually do something	-> DONE

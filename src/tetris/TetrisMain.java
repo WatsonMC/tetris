@@ -32,11 +32,13 @@ public class TetrisMain extends Canvas implements Runnable {
 	private static final Integer HEIGHT = 600;
 	private static final Integer HS_WIDTH = 300;
 	private static final Integer HS_HEIGHT = 500;
+	public static int gameSpeed = 500;
 	private Image[] tetrisBlocks;
 	private final int BLOCK_SIZE = 25;
 	private TetrisGrid grid;
 	private RandomBlockGenerator blockGenerator;
 	private Block testBlock;	//testing
+	private JFrame mainFrame;
 	
 	
 	private Controller cont;
@@ -58,10 +60,11 @@ public class TetrisMain extends Canvas implements Runnable {
 		tetrisMain.setPreferredSize(new Dimension(WIDTH, HEIGHT+25));	// set preffered size then pack instead of setbounds alone, allows removal of border
 		
 		tetrisMain.setBounds(0,25,WIDTH,HEIGHT);	// starts at 25 to allow menu bar,
+		tetrisMain.mainFrame = frame;
 		
 		//tetrisMain.addKeyListener(tetrisMain);
 		//add menu bar
-		Config conf = new Config();
+		Config conf = new Config(tetrisMain);
 		tetrisMain.conf = conf;
 		
 		
@@ -146,8 +149,6 @@ public class TetrisMain extends Canvas implements Runnable {
 		g.setColor(Color.white);
 		g.setFont(new Font("Calibri", Font.PLAIN, 24));
 		g.drawString("tetris", WIDTH/2, HEIGHT/2);
-		g.drawImage(tetrisBlocks[0], 100, 100,25, 25,null);
-		g.drawImage(tetrisBlocks[1], 75, 100,25, 25,null);
 		grid.drawGrid(g);
 	}
 
@@ -225,7 +226,7 @@ public class TetrisMain extends Canvas implements Runnable {
 				JMenuItem config = new JMenuItem("Config Menu");
 				config.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						openConfigMenu(frame);
+						conf.openConfigMenu(frame);
 					}
 				});
 				file.add(config);
@@ -284,7 +285,7 @@ public class TetrisMain extends Canvas implements Runnable {
 		jbDeleteRows.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Successfully pressed deleterow button");
-				grid.clearFullLines();
+				grid.clearFullRows();
 			}
 		});
 		jbDeleteRows.setBounds(100,100,100,50);
@@ -340,6 +341,15 @@ public class TetrisMain extends Canvas implements Runnable {
 		});
 		deleteCurrentBlock.setBounds(150,400,150,50);
 		testEnv.add(deleteCurrentBlock);
+		
+		JButton clearGrid  = new JButton("Cleargrid");
+		clearGrid.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				grid.clearGrid();
+			}
+		});
+		clearGrid.setBounds(300,400,150,50);
+		testEnv.add(clearGrid);
 		testEnv.setVisible(true);
 	}
 	
@@ -348,7 +358,8 @@ public class TetrisMain extends Canvas implements Runnable {
 	 * @param frame
 	 * THe frame object which is opened from
 	 */
-	public void openConfigMenu(JFrame frame) {
+	
+	public void openConfigMenuSUPERSEDED(JFrame frame) {
 		JFrame configMenu = new JFrame("Config");
 		configMenu.setBounds(0,0,WIDTH,HEIGHT/2);	//500,300
 		configMenu.setSize(WIDTH,HEIGHT/2);

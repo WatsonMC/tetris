@@ -51,7 +51,7 @@ public class Block {
 		this.grid = grid;
 
 		this.setShapeData();
-		insertBlock();
+		//insertBlock();
 
 	}
 	
@@ -60,8 +60,10 @@ public class Block {
 	 */
 	public void insertBlock() {
 		
-		grid.addBlock(this);
-		drawn = true;
+		grid.currentBlock = this;
+		drawn = true;	//Drawn really means inserted into the block at all
+		//not necessarily that at this specific instant the block is on the canvas
+
 	}
 	
 	
@@ -114,6 +116,8 @@ public class Block {
 		}
 		else {
 			grid.addBlock(this);
+			grid.removeBlockFromGrid(this);	//will delete the block, and add a new one
+			System.out.println("block permanantly added to grid, dereferenced from grid");
 		}
 	}
 	public void moveUp() {
@@ -126,6 +130,47 @@ public class Block {
 			this.rowPosn-=1;
 			grid.addBlock(this);
 		}
+	}
+	
+	/**
+	 * Method to rotate a block. Will check that the rotation is allowed, then proceed if so, or do nothing
+	 */
+	public void rotateBlock() {
+		//drawn check
+		if(!drawn) {
+			System.out.println("MoveDown command given to block not yet drawn");
+			System.exit(1);
+		}
+		//rotate and check
+		grid.removeBlock(this);
+		this.rotationalState = (this.rotationalState+1)%4 ;
+		this.setShapeData();
+		if(grid.checkMove(this,this.rowPosn,this.colPosn)) {
+			grid.addBlock(this);
+		}
+		else {
+			this.rotationalState--;
+			this.setShapeData();
+			grid.addBlock(this);
+		}
+	}
+	
+	/**
+	 * getter/setter methods for the row and column position of the block
+	 * @return
+	 */
+	public int getCol() {
+		return this.colPosn;
+	}
+	public int getRow() {
+		return this.rowPosn;
+	}
+	
+	public void setCol(int col) {
+		this.colPosn = col; 
+	}
+	public void setRow(int row) {
+		this.rowPosn = row; 
 	}
 	
 	

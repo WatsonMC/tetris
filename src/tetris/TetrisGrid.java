@@ -107,11 +107,19 @@ public class TetrisGrid {
 		
 	}
 	
+	public void clearGrid() {
+		for(int x  = 0;x<this.WIDTH ;x++) {
+			for(int y = 0; y<this.HEIGHT;y++) {
+				this.grid[y][x] = -1;
+			}
+		}
+	}
+	
 	/** 
 	 * Method to detect and clear all full lines of the grid object
 	 * Cyles from top row down to bottom row, first listing rows which require removal then removing them
 	 */
-	public void clearFullLines() {
+	public void clearFullRows() {
 		//cycle through each row
 		//check each row is not full
 		//if row is full
@@ -139,6 +147,9 @@ public class TetrisGrid {
 		//cycle through from there
 		for(int row = firstNonEmptyRow; row<this.HEIGHT;row++) {
 			if(isFullRow(row)) {
+				if(this.checkGridHasBlock()) {
+					this.currentBlock.moveDown();
+				}
 				clearFullRow(row,firstNonEmptyRow);
 				firstNonEmptyRow +=1;
 			}
@@ -193,7 +204,7 @@ public class TetrisGrid {
 	 */
 	public void clearFullRow(int fullRow,int firstNonEmptyRow) {
 		if(fullRow == firstNonEmptyRow) {
-			grid[fullRow] = EMPTY_ROW;
+			setGridRow(grid[fullRow], EMPTY_ROW);
 		}
 		else if(fullRow< firstNonEmptyRow) {
 			System.out.println("somehow have passed a non-empty row which is lower than the full row to clear row function");
@@ -202,9 +213,9 @@ public class TetrisGrid {
 		else {
 			//fullrow must be larger than non empty row
 			for(int row = fullRow; row>firstNonEmptyRow;row --){
-					grid[row] = grid[row-1];
+				setGridRow(grid[row],grid[row-1]);
 				}
-				grid[firstNonEmptyRow] = EMPTY_ROW;
+			setGridRow(grid[firstNonEmptyRow],EMPTY_ROW);
 			}
 	}
 	
@@ -227,6 +238,60 @@ public class TetrisGrid {
 		
 	}
 	
+	/**
+	 * Deletes block from existing location in grid. bloc spaces become blank
+	 * @param block
+	 * block to be deleted from grid. assumes block already exists at that loc
+	 * Does not detach block from grid!
+	 */
+	public void removeBlock(Block block) {
+		for(int i = 0; i<4; i++) {
+			for (int j = 0; j<4;j++) {
+				if(block.currentShapeData[i][j]) {
+					grid[block.rowPosn+i][block.colPosn+j] = -1;
+				}
+			}
+		}
+	}
+
+	public void removeBlockFromGrid(Block block) {
+		if(!this.currentBlock.equals(block)) {
+			System.out.println("Attempted to remove block which is not attached to grid, exiting");
+			System.exit(1);
+		}
+		else{
+			this.currentBlock = null;
+			this.clearFullRows();
+		}
+	}
+	public int getWidth() {
+		return this.WIDTH;
+	}
+	
+	/**
+	 * Getter method for current block being moved by grid
+	 * @return
+	 * returns the grids current block 
+	 */
+	public Block getCurrentBlock() {
+		return this.currentBlock;
+		
+	}
+
+
+	/**
+	 * Method for checking if the grid has a block at current or not
+	 * Returns true iff the grid has a block drawn
+	 */
+	public boolean checkGridHasBlock() {
+		if(currentBlock == null) {
+			return false;
+		}
+		return true;
+		
+	}
+
+
 	/** 
 	 * Handles checking entire legitimacy of move
 	 * Will return true only if move is allowed:
@@ -275,47 +340,6 @@ public class TetrisGrid {
 	}
 
 
-	/**
-	 * Deletes block from existing location in grid. bloc spaces become blank
-	 * @param block
-	 * block to be deleted from grid. assumes block already exists at that loc
-	 */
-	public void removeBlock(Block block) {
-		for(int i = 0; i<4; i++) {
-			for (int j = 0; j<4;j++) {
-				if(block.currentShapeData[i][j]) {
-					grid[block.rowPosn+i][block.colPosn+j] = -1;
-				}
-			}
-		}
-	}
-	
-	
-	/**
-	 * Getter method for current block being moved by grid
-	 * @return
-	 * returns the grids current block 
-	 */
-	public Block getCurrentBlock() {
-		return this.currentBlock;
-	}
-	
-	/**
-	 * Method for checking if the grid has a block at current or not
-	 * Returns true iff the grid has a block drawn
-	 */
-	public boolean checkBlock() {
-		if(currentBlock == null) {
-			return false;
-		}
-		return true;
-		
-	}
-	
-	public int getWidth() {
-		return this.WIDTH;
-	}
-	
 	/*
 	 * returns true of the given coordinates in the grid represent a currently occupied position
 	 */
@@ -328,4 +352,22 @@ public class TetrisGrid {
 		return true;
 	}
 	
+	/**
+	 * method to safely set the value of one grid row with the values of another to avoid aliasing
+	 * @param row1
+	 * row to be changed
+	 * @param row2
+	 * row to be copied
+	 */
+	private void setGridRow(int[] row1, int[] row2) {
+		//Added 09.09.2018 -> had massive issues with aliasing during the clearFullLines routine
+		if(row1.length!= row2.length) {
+			// Some massive error
+			System.out.println("row copy operation attempted with rows of different length, exiting");
+			System.exit(1);
+		}
+		for(int i = 0; i<row1.length;i++) {
+			row1[i] = row2[i];
+		}
+	}
 }

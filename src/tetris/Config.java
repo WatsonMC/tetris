@@ -1,47 +1,84 @@
 package tetris;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
 
 // class to implement the config of key controls
 //TODO make this shit soin
 public class Config {	
 	private static String UP_KEY = "Up";	//key to rotate block
 	private static String DOWN_KEY = "Down";	//key to move block down
-	private static String LEFT_KEY = "Left";	//key to move block left
+	public static String LEFT_KEY = "Left";	//key to move block left
 	private static String RIGHT_KEY = "Right";	//key to move block right
 	private static String PAUSE = "P";	//key to move
+	private static TetrisMain game;
+	
+	public static Map<String, String> keyListMap = new HashMap<>();
+	static {
+		Map<String, String> aMap = new HashMap<>();
+		aMap.put("1","VK_1");
+		aMap.put("2","VK_2");
+		aMap.put("3","VK_3");
+		aMap.put("4","VK_4");
+		aMap.put("5","VK_5");
+		aMap.put("6","VK_6");
+		aMap.put("7","VK_7");
+		aMap.put("8","VK_8");
+		aMap.put("9","VK_9");
+		aMap.put("0","VK_0");
+		aMap.put("Q","VK_Q");
+		aMap.put("W","VK_W");
+		aMap.put("E","VK_E");
+		aMap.put("R","VK_R");
+		aMap.put("T","VK_T");
+		aMap.put("Y","VK_Y");
+		aMap.put("U","VK_U");
+		aMap.put("I","VK_I");
+		aMap.put("O","VK_O");
+		aMap.put("P","VK_P");
+		aMap.put("A","VK_A");
+		aMap.put("S","VK_S");
+		aMap.put("D","VK_D");
+		aMap.put("F","VK_F");
+		aMap.put("G","VK_G");
+		aMap.put("H","VK_H");
+		aMap.put("J","VK_J");
+		aMap.put("K","VK_K");
+		aMap.put("L","VK_L");
+		aMap.put("Z","VK_Z");
+		aMap.put("X","VK_X");
+		aMap.put("C","VK_C");
+		aMap.put("V","VK_V");
+		aMap.put("B","VK_B");
+		aMap.put("N","VK_N");
+		aMap.put("M","VK_M");
+		aMap.put("Up","VK_Up");
+		aMap.put("Down","VK_Down");
+		aMap.put("Left","VK_Left");
+		aMap.put("Right","VK_Right");
+		keyListMap = Collections.unmodifiableMap(aMap);
+	}
 	
 	private static String[] possibleKeys = {};
 	//TODO cjamge keylist into a key map, mapping display strings to key selection strings, then use selections to set key controls
-	public Config() {
+	public Config(TetrisMain game) {
+		this.game = game;
 		//get usable keys
-		Field[] fields = java.awt.event.KeyEvent.class.getDeclaredFields();
-		List<String> keyList = new ArrayList<>();
-		for(Field f:fields) {
-			//cycle through all fields
-			if(Modifier.isStatic(f.getModifiers())) {
-				if(f.getName().substring(0, 2).equals("VK")&&f.getName().length()<=4) {
-					//is a VK field
-						Object x = new Object();
-						try {
-							keyList.add(KeyEvent.getKeyText(f.getInt(x)));
-						} catch (IllegalArgumentException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (IllegalAccessException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-				}
-			}
-		}
-		keyList.addAll(new ArrayList(Arrays.asList("Down", "Up", "Left", "Right")));
-		possibleKeys = keyList.toArray(possibleKeys);
+		//keyList.addAll(new ArrayList(Arrays.asList("Down", "Up", "Left", "Right")));
+		//possibleKeys = keyList.toArray(possibleKeys);
 	}
 	
 	
@@ -99,5 +136,95 @@ public class Config {
 	
 	public String[] getKeyList() {
 		return possibleKeys.clone(); 
+	}
+	
+	public void openConfigMenu(JFrame frame) {
+		JFrame configMenu = new JFrame("Config");
+		configMenu.setBounds(0,0,game.getWidth(),game.getHeight()/2);	//500,300
+		configMenu.setSize(game.getWidth(),game.getHeight()/2);
+		configMenu.setResizable(false);
+		configMenu.setLayout(null);
+		configMenu.setLocationRelativeTo(null);
+		configMenu.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
+		String[] keyList = new String[keyListMap.size()];
+		keyList = keyListMap.keySet().toArray(keyList);
+		
+		int comboWidth = 100;
+		int comboHeight = 25;
+		
+		JComboBox<String> leftKeySelection = new JComboBox<>(keyList);
+		leftKeySelection.setSelectedItem(LEFT_KEY);
+		leftKeySelection.setSize(comboWidth,comboHeight);
+		leftKeySelection.setBounds(100, 25, comboWidth,comboHeight);
+		leftKeySelection.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	LEFT_KEY = leftKeySelection.getSelectedItem().toString();
+		    }
+		});
+			
+		JComboBox<String> rightKeySelection = new JComboBox<>(keyList);
+		rightKeySelection.setSelectedItem(RIGHT_KEY);
+		rightKeySelection.setSize(comboWidth,comboHeight);
+		rightKeySelection.setBounds(300, 25, comboWidth,comboHeight);
+		rightKeySelection.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	RIGHT_KEY = rightKeySelection.getSelectedItem().toString();
+		    }
+		});
+		
+		JComboBox<String> upKeySelection = new JComboBox<>(keyList);
+		upKeySelection.setSelectedItem(UP_KEY);
+		upKeySelection.setSize(comboWidth,comboHeight);
+		upKeySelection.setBounds(100, 75, comboWidth,comboHeight);
+		upKeySelection.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	UP_KEY= upKeySelection.getSelectedItem().toString();
+		    }
+		});
+		
+		JComboBox<String> downKeySelection = new JComboBox<>(keyList);
+		downKeySelection.setSelectedItem(DOWN_KEY);
+		downKeySelection.setSize(comboWidth,comboHeight);
+		downKeySelection.setBounds(300, 75, comboWidth,comboHeight);
+		downKeySelection.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	DOWN_KEY = downKeySelection.getSelectedItem().toString();
+		    }
+		});
+		
+		JComboBox<String> pauseKeySelection = new JComboBox<>(keyList);
+		pauseKeySelection.setSelectedItem(PAUSE);
+		pauseKeySelection.setSize(comboWidth,comboHeight);
+		pauseKeySelection.setBounds(200, 150, comboWidth,comboHeight);
+		pauseKeySelection.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	PAUSE = pauseKeySelection.getSelectedItem().toString();
+		    }
+		});
+		
+		JButton okay = new JButton("OKAY");
+		okay.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Saving button config");
+				//TODO code to save config file for buttons
+				
+				configMenu.dispose();
+				
+			}
+		});
+		okay.setBounds(200,225, 200,50);
+		okay.setSize(100,25);
+		
+		configMenu.add(okay);
+		configMenu.add(downKeySelection);
+		configMenu.add(upKeySelection);
+		configMenu.add(leftKeySelection);
+		configMenu.add(rightKeySelection);
+		configMenu.add(pauseKeySelection);
+		
+		configMenu.setVisible(true);
+		
+		
 	}
 }
