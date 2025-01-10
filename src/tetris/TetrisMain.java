@@ -5,18 +5,16 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferStrategy;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -25,6 +23,8 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+
+import org.w3c.dom.css.Rect;
 
 public class TetrisMain extends Canvas implements Runnable {
 
@@ -39,7 +39,7 @@ public class TetrisMain extends Canvas implements Runnable {
 	private RandomBlockGenerator blockGenerator;
 	private Block testBlock;	//testing
 	private JFrame mainFrame;
-	
+	private boolean running;	//used for new game/end game functionality
 	
 	private Controller cont;
 	private Config conf;
@@ -64,41 +64,60 @@ public class TetrisMain extends Canvas implements Runnable {
 		
 		//tetrisMain.addKeyListener(tetrisMain);
 		//add menu bar
-		Config conf = new Config(tetrisMain);
-		tetrisMain.conf = conf;
-		
-		
 		tetrisMain.constructMenuBar(frame);
 		frame.pack();
 		frame.setVisible(true);
-		
 		tetrisMain.start();
-		
-		
-		
 	}
 	/**
 	 * Main running loop of program
 	 */
+	
 	public void run() {
-		init();	//can still make a static call since this method is non static
-		boolean running = true;
+		//this.mainFrame.setFocusableWindowState(true);
+		init();
+		running = true;
 		while(running) {
-			update();	// calls update method
-			BufferStrategy buff = getBufferStrategy();	//creates the method of buffering for the window
-			if(buff == null) {
-				createBufferStrategy(3);	// sets the buffering strategy as triple 
-				continue;
+				update();	// calls update method
+				BufferStrategy buff = getBufferStrategy();	//creates the method of buffering for the window
+				if(buff == null) {
+					createBufferStrategy(3);	// sets the buffering strategy as triple 
+					continue;
+				}
+				Graphics2D background = (Graphics2D) buff.getDrawGraphics(); //graphics2d is a fundamental class for rendering 2-d shapes. takes user space co-ordinates
+				
+				render(background);
+				
+				if(cont.getPauseFlag()) {
+					drawPauseMessage(background);
+				}
+				
+				buff.show(); 
 			}
-			Graphics2D background = (Graphics2D) buff.getDrawGraphics(); //graphics2d is a fundamental class for rendering 2-d shapes. takes user space co-ordinates
-			render(background);
-			
-			buff.show(); 
 		}
 
+	public void update() {
+		// update current keys being pressed:
+		String keys ="Left: " + cont.getLeftFlag() +
+				", Right: " + cont.getRightFlag() +
+				", Down: " + cont.getDownFlag() +
+				", Up: " + cont.getUpFlag() +
+				", Pause: " + cont.getPauseFlag();
+		//System.out.println(keys);
+		
+	}
+	
+	/** 
+	 * starts a new game, initializing the required variables
+	 */
+	public void newGame() {
+		//Do fucking nothing....
 	}
 	
 	public void init() {
+		
+		Config conf = new Config(this);
+		this.conf = conf;
 		
 		//create the controller object
 		Controller  cont = new Controller(this,this.conf);
@@ -106,6 +125,7 @@ public class TetrisMain extends Canvas implements Runnable {
 		//create the block generator object
 		RandomBlockGenerator b= new RandomBlockGenerator();
 		this.blockGenerator = b;
+	
 		
 		this.addKeyListener(cont);	//The keylistener for this canvas is going to be exclusively held in the controller class
 		
@@ -126,19 +146,6 @@ public class TetrisMain extends Canvas implements Runnable {
 		// Initialize the block controller for the game
 		BlockController blockCtrl = new BlockController(this);
 	}
-	
-	public void update() {
-		// update current keys being pressed:
-		String keys ="Left: " + cont.getLeftFlag() +
-				", Right: " + cont.getRightFlag() +
-				", Down: " + cont.getDownFlag() +
-				", Up: " + cont.getUpFlag() +
-				", Pause: " + cont.getPauseFlag();
-		//System.out.println(keys);
-		
-	}
-	
-	
 	/**
 	 * drawings is done by passing around the graphics 2D object
 	 * @param g
@@ -148,8 +155,49 @@ public class TetrisMain extends Canvas implements Runnable {
 		g.fillRect(0, 0, WIDTH, HEIGHT);
 		g.setColor(Color.white);
 		g.setFont(new Font("Calibri", Font.PLAIN, 24));
-		g.drawString("tetris", WIDTH/2, HEIGHT/2);
+		g.drawString(Integer.toString(this.grid.getScore()), WIDTH/2, HEIGHT/2);
 		grid.drawGrid(g);
+	}
+	
+	/**
+	 * Method to draw an un-interactable textbox to tell user game is paused
+	 * @param g
+	 * Graphics object on which to draw the message
+	 */
+	public void drawPauseMessage(Graphics2D g) {
+		String pauseMessage = "Game paused, press\n"+ conf.getPause() + "\nto continue";
+		int msgBoxWidth = WIDTH/2;
+		int msgBoxHeight = 200;
+			
+		g.setColor(Color.WHITE);
+		g.fillRect(WIDTH/2 - (msgBoxWidth+10)/2, HEIGHT/2 - (msgBoxHeight+10)/2, msgBoxWidth+10, msgBoxHeight+10);
+		g.setColor(Color.DARK_GRAY);
+		
+		g.fillRect(WIDTH/2 - (msgBoxWidth)/2, HEIGHT/2 - (msgBoxHeight/2), msgBoxWidth, msgBoxHeight);
+		g.setColor(Color.WHITE);
+		Font messageFont = new Font("Calibri", Font.PLAIN, 24);
+		
+		int i = 0;
+		Rectangle messageArea = new Rectangle(msgBoxWidth, msgBoxHeight);
+		for(String s: pauseMessage.split("\n")) {
+			messageArea.setLocation(WIDTH/2-msgBoxWidth/2 , HEIGHT/2 -msgBoxHeight+i*msgBoxHeight/3);
+			drawCenteredString(g, s, messageArea, messageFont);
+			i++;
+		}
+	}
+	
+	
+	public void drawCenteredString(Graphics2D g, String text, Rectangle rect, Font font) {
+	    // Get the FontMetrics
+	    FontMetrics metrics = g.getFontMetrics(font);
+	    // Determine the X coordinate for the text
+	    int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
+	    // Determine the Y coordinate for the text (note we add the ascent, as in java 2d 0 is top of the screen)
+	    int y = rect.y + ((rect.height + metrics.getHeight()) / 2) + metrics.getAscent();
+	    // Set the font
+	    g.setFont(font);
+	    // Draw the String
+	    g.drawString(text, x, y);
 	}
 
 	
@@ -185,7 +233,7 @@ public class TetrisMain extends Canvas implements Runnable {
 				JMenuItem newGame = new JMenuItem("New Game");
 				newGame.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						//NEWGAME CODE;
+						newGame();
 						System.out.println("Starting new game...");
 					}
 				});
@@ -432,5 +480,10 @@ public class TetrisMain extends Canvas implements Runnable {
 	protected TetrisGrid getGrid() {
 		return this.grid;
 	}
+	
+	protected Controller getCont() {
+		return this.cont;
+	}
+	
 	
 }

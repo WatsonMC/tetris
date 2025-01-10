@@ -15,3 +15,7 @@ Visual:
 
 Misc:
 - Make config buttons actually do something	-> DONE
+
+
+Bugs:
+HOlding down when block hits bottom and new one generated causes error messages

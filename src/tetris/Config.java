@@ -1,20 +1,16 @@
 package tetris;
 
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JTextField;
 
 // class to implement the config of key controls
 //TODO make this shit soin
@@ -139,9 +135,11 @@ public class Config {
 	}
 	
 	public void openConfigMenu(JFrame frame) {
+		
 		JFrame configMenu = new JFrame("Config");
+		
 		configMenu.setBounds(0,0,game.getWidth(),game.getHeight()/2);	//500,300
-		configMenu.setSize(game.getWidth(),game.getHeight()/2);
+		configMenu.setSize(game.getWidth(),game.getHeight()/2+50);
 		configMenu.setResizable(false);
 		configMenu.setLayout(null);
 		configMenu.setLocationRelativeTo(null);
@@ -156,52 +154,87 @@ public class Config {
 		JComboBox<String> leftKeySelection = new JComboBox<>(keyList);
 		leftKeySelection.setSelectedItem(LEFT_KEY);
 		leftKeySelection.setSize(comboWidth,comboHeight);
-		leftKeySelection.setBounds(100, 25, comboWidth,comboHeight);
+		leftKeySelection.setBounds(100, 50, comboWidth,comboHeight);
 		leftKeySelection.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		    	LEFT_KEY = leftKeySelection.getSelectedItem().toString();
 		    }
 		});
-			
+		
+		JTextField leftKeyTitle = new JTextField("Left Key");
+		leftKeyTitle.setBounds(100, 25,comboWidth,comboHeight);
+		leftKeyTitle.setEditable(false);
+		leftKeyTitle.setHorizontalAlignment(0);
+		leftKeyTitle.setFont(new Font("ARIAL",Font.BOLD,16));
+		configMenu.add(leftKeyTitle);
+		
 		JComboBox<String> rightKeySelection = new JComboBox<>(keyList);
 		rightKeySelection.setSelectedItem(RIGHT_KEY);
 		rightKeySelection.setSize(comboWidth,comboHeight);
-		rightKeySelection.setBounds(300, 25, comboWidth,comboHeight);
+		rightKeySelection.setBounds(300, 50, comboWidth,comboHeight);
 		rightKeySelection.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		    	RIGHT_KEY = rightKeySelection.getSelectedItem().toString();
 		    }
 		});
 		
+		JTextField rightKeyTitle = new JTextField("Right Key");
+		rightKeyTitle.setBounds(300, 25,comboWidth,comboHeight);
+		rightKeyTitle.setEditable(false);
+		rightKeyTitle.setHorizontalAlignment(0);
+		rightKeyTitle.setFont(new Font("ARIAL",Font.BOLD,16));
+		configMenu.add(rightKeyTitle);
+		
 		JComboBox<String> upKeySelection = new JComboBox<>(keyList);
 		upKeySelection.setSelectedItem(UP_KEY);
 		upKeySelection.setSize(comboWidth,comboHeight);
-		upKeySelection.setBounds(100, 75, comboWidth,comboHeight);
+		upKeySelection.setBounds(100, 125, comboWidth,comboHeight);
 		upKeySelection.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		    	UP_KEY= upKeySelection.getSelectedItem().toString();
 		    }
 		});
 		
+		JTextField upKeyTitle = new JTextField("Rotate Key");
+		upKeyTitle.setBounds(100, 100,comboWidth,comboHeight);
+		upKeyTitle.setEditable(false);
+		upKeyTitle.setHorizontalAlignment(0);
+		upKeyTitle.setFont(new Font("ARIAL",Font.BOLD,16));
+		configMenu.add(upKeyTitle);
+		
 		JComboBox<String> downKeySelection = new JComboBox<>(keyList);
 		downKeySelection.setSelectedItem(DOWN_KEY);
 		downKeySelection.setSize(comboWidth,comboHeight);
-		downKeySelection.setBounds(300, 75, comboWidth,comboHeight);
+		downKeySelection.setBounds(300, 125, comboWidth,comboHeight);
 		downKeySelection.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		    	DOWN_KEY = downKeySelection.getSelectedItem().toString();
 		    }
 		});
 		
+		JTextField downKeyTitle = new JTextField("Down Key");
+		downKeyTitle.setBounds(300, 100,comboWidth,comboHeight);
+		downKeyTitle.setEditable(false);
+		downKeyTitle.setHorizontalAlignment(0);
+		downKeyTitle.setFont(new Font("ARIAL",Font.BOLD,16));
+		configMenu.add(downKeyTitle);
+		
 		JComboBox<String> pauseKeySelection = new JComboBox<>(keyList);
 		pauseKeySelection.setSelectedItem(PAUSE);
 		pauseKeySelection.setSize(comboWidth,comboHeight);
-		pauseKeySelection.setBounds(200, 150, comboWidth,comboHeight);
+		pauseKeySelection.setBounds(200, 200, comboWidth,comboHeight);
 		pauseKeySelection.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		    	PAUSE = pauseKeySelection.getSelectedItem().toString();
 		    }
 		});
+		
+		JTextField pauseKeyTitle = new JTextField("Pause Key");
+		pauseKeyTitle.setBounds(200, 175,comboWidth,comboHeight);
+		pauseKeyTitle.setEditable(false);
+		pauseKeyTitle.setHorizontalAlignment(0);
+		pauseKeyTitle.setFont(new Font("ARIAL",Font.BOLD,16));
+		configMenu.add(pauseKeyTitle);
 		
 		JButton okay = new JButton("OKAY");
 		okay.addActionListener(new ActionListener() {
@@ -213,7 +246,7 @@ public class Config {
 				
 			}
 		});
-		okay.setBounds(200,225, 200,50);
+		okay.setBounds(200,250, 200,50);
 		okay.setSize(100,25);
 		
 		configMenu.add(okay);

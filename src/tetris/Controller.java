@@ -8,6 +8,7 @@ public class Controller implements KeyListener {
 	private Config conf;
 	private boolean left,right,down,up, pause;
 	
+
 	public Controller(TetrisMain game, Config conf) {
 		//constructed by passing the actual game object
 		this.game = game;
@@ -25,28 +26,34 @@ public class Controller implements KeyListener {
 		if(pressedKey.equals(conf.getLeft())) {
 			System.out.println("Left pressed");
 			left = true;
-			game.getGrid().getCurrentBlock().moveLeft();
+			if(!getPauseFlag()) {
+				game.getGrid().getCurrentBlock().moveLeft();
+			}
 		}
 		else if(pressedKey.equals(conf.getRight())) {
 			System.out.println("Right pressed");
 			right = true;
-			game.getGrid().getCurrentBlock().moveRight();
-
+			if(!getPauseFlag()) {
+				game.getGrid().getCurrentBlock().moveRight();
+			}
 		}
 		else if(pressedKey.equals(conf.getUp())) {
 			System.out.println("Up pressed");
 			up = true;
 			//TODO change to rotate
-			game.getGrid().getCurrentBlock().moveUp();
+			if(!getPauseFlag()) {
+				game.getGrid().getCurrentBlock().rotateBlock();
+			}
 		}
 		else if(pressedKey.equals(conf.getDown())) {
 			System.out.println("Down pressed");
 			down = true;
-			game.getGrid().getCurrentBlock().moveDown();
+			if(!getPauseFlag()) {
+				game.getGrid().getCurrentBlock().moveDown();
+			}
 		}
 		else if(pressedKey.equals(conf.getPause())) {
 			System.out.println("Pause pressed");
-			pause = true;
 		}
 
 	}
@@ -81,7 +88,7 @@ public class Controller implements KeyListener {
 		}
 		else if(releasedKey.equals(conf.getPause())) {
 			System.out.println("Pause pressed");
-			pause = false;
+			pause = togglePauseFlag();
 
 		}
 	}
@@ -93,7 +100,9 @@ public class Controller implements KeyListener {
 	public void  keyTyped(KeyEvent e) {
 	}
 	
-	
+	public boolean togglePauseFlag() {
+		return !pause;
+	}
 	
 	/**
 	 * -------------------------------
