@@ -33,7 +33,7 @@ public class BlockController {
 				}
 			}
 		};
-		ScheduledFuture<?> lockMvmntHandler = scheduler.scheduleAtFixedRate(blockMvmnt, 1000, game.gameSpeed, TimeUnit.MILLISECONDS );
+			ScheduledFuture<?> lockMvmntHandler = scheduler.scheduleAtFixedRate(blockMvmnt, 1000, game.gameSpeed, TimeUnit.MILLISECONDS );
 		
 	}
 	

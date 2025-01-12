@@ -60,9 +60,7 @@ public class TetrisGrid {
 			grid[15][i] = 1;
 		}
 		
-		for(int i = 0 ; i <this.WIDTH ;i ++) {
-			grid[16][i] = 1;
-		}
+//
 		grid[17][1] = 1;
 		grid[14][1] = 1;
 		

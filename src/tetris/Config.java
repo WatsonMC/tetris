@@ -13,8 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JTextField;
 
 // class to implement the config of key controls
-//TODO make this shit soin
-public class Config {	
+public class Config {
 	private static String UP_KEY = "Up";	//key to rotate block
 	private static String DOWN_KEY = "Down";	//key to move block down
 	public static String LEFT_KEY = "Left";	//key to move block left
