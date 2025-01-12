@@ -14,12 +14,44 @@ public class BlockController {
 	public static final ShapeData zshape = new ShapeData("zshape", "/zshape.txt",0,5);
 	public static final ShapeData square = new ShapeData("square", "/square.txt",0,6);
 	public static final ShapeData tee = new ShapeData("tee", "/tee.txt",0,7);
-	
-	
+
+	private ScheduledFuture<?> blockMvmntHandler;
+	private ScheduledExecutorService scheduler;
+
 	public BlockController(TetrisMain game) {
 		this.game = game;
-		ScheduledExecutorService  scheduler =  Executors.newScheduledThreadPool(1);
+		scheduler =  Executors.newScheduledThreadPool(1);
 		
+//		Runnable blockMvmnt =  new Runnable() {
+//			public void run() {
+//				if(!game.getCont().getPauseFlag()) {
+//					if(!game.getGrid().checkGridHasBlock()) {
+//						insertNewBlock();
+//						System.out.println("new block added to game");
+//					}
+//					else{
+//						moveBlock();
+//					}
+//				}
+//			}
+//		};
+//		ScheduledFuture<?> blockMvmntHandler = scheduler.scheduleAtFixedRate(blockMvmnt, 1000, game.gameSpeed, TimeUnit.MILLISECONDS );
+	}
+
+	/**
+	 * Stops block generation by stopping scheduler
+	 */
+	public void stopBlockGeneration(){
+		blockMvmntHandler.cancel(true);
+	}
+
+	/**
+	 * Starts the block generation.
+	 */
+	public void startBlockGeneration(){
+		if(blockMvmntHandler != null){
+			stopBlockGeneration();
+		}
 		Runnable blockMvmnt =  new Runnable() {
 			public void run() {
 				if(!game.getCont().getPauseFlag()) {
@@ -33,9 +65,11 @@ public class BlockController {
 				}
 			}
 		};
-			ScheduledFuture<?> lockMvmntHandler = scheduler.scheduleAtFixedRate(blockMvmnt, 1000, game.gameSpeed, TimeUnit.MILLISECONDS );
-		
+		blockMvmntHandler = scheduler.scheduleAtFixedRate(blockMvmnt, 1000, game.gameSpeed, TimeUnit.MILLISECONDS );
 	}
+
+
+
 	
 	/**
 	 * Attempts to mvoe the current block of the game down

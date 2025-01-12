@@ -46,31 +46,31 @@ public class TetrisGrid {
 		this.LAST_COL = this.WIDTH-1;
 		this.LAST_ROW = this.HEIGHT-1;
 		
-		grid[this.LAST_ROW][this.LAST_COL] = 6;
-		grid[0][this.LAST_COL] = 5;
-		grid[0][0] = 4;
-		grid[this.LAST_ROW][0] = 3;
-		
-		grid[0][0] = 2;
-		grid[1][1] = 2;
-		grid[2][3] = 3;
-		grid[2][1] = 2;
-		grid[1][3] = 6;
-		for(int i = 0 ; i <this.WIDTH ;i ++) {
-			grid[15][i] = 1;
-		}
-		
+//		grid[this.LAST_ROW][this.LAST_COL] = 6;
+//		grid[0][this.LAST_COL] = 5;
+//		grid[0][0] = 4;
+//		grid[this.LAST_ROW][0] = 3;
 //
-		grid[17][1] = 1;
-		grid[14][1] = 1;
-		
-		for(int i = 0 ; i <this.WIDTH ;i ++) {
-			grid[10][i] = 1;
-		}
-		
-		for(int i = 0 ; i <this.WIDTH ;i ++) {
-			grid[5][i] = 1;
-		}
+//		grid[0][0] = 2;
+//		grid[1][1] = 2;
+//		grid[2][3] = 3;
+//		grid[2][1] = 2;
+//		grid[1][3] = 6;
+//		for(int i = 0 ; i <this.WIDTH ;i ++) {
+//			grid[15][i] = 1;
+//		}
+//
+////
+//		grid[17][1] = 1;
+//		grid[14][1] = 1;
+//
+//		for(int i = 0 ; i <this.WIDTH ;i ++) {
+//			grid[10][i] = 1;
+//		}
+//
+//		for(int i = 0 ; i <this.WIDTH ;i ++) {
+//			grid[5][i] = 1;
+//		}
 		
 	}
 	
@@ -105,8 +105,14 @@ public class TetrisGrid {
 		}
 		
 	}
-	
+
+	public void resetGridForNewGame(){
+		clearGrid();
+		scoreHldr.resetScore();
+	}
+
 	public void clearGrid() {
+		currentBlock = null;
 		for(int x  = 0;x<this.WIDTH ;x++) {
 			for(int y = 0; y<this.HEIGHT;y++) {
 				this.grid[y][x] = -1;

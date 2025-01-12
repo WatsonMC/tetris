@@ -59,7 +59,6 @@ public class Block {
 	 * Adds block to the grid object
 	 */
 	public void insertBlock() {
-		
 		grid.currentBlock = this;
 		drawn = true;	//Drawn really means inserted into the block at all
 		//not necessarily that at this specific instant the block is on the canvas

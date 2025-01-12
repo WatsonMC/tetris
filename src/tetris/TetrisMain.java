@@ -1,14 +1,6 @@
 package tetris;
 
-import java.awt.BorderLayout;
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferStrategy;
@@ -16,13 +8,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
+import javax.swing.*;
 
 import org.w3c.dom.css.Rect;
 
@@ -40,60 +26,64 @@ public class TetrisMain extends Canvas implements Runnable {
 	private Block testBlock;	//testing
 	private JFrame mainFrame;
 	private boolean running;	//used for new game/end game functionality
-	
+	private boolean exitProgram = false;	//used to trigger exit of the main loop when end game pressed
+
+	private Thread thread;	//main game thread, want only one
+
 	private Controller cont;
 	private Config conf;
+	private BlockController blockController;
 
 	public static void main(String [] args) {
 		//creating frame for game
 		JFrame frame = new JFrame("Tetris");	//creating the JFrame with the name Trtris
 		frame.getContentPane().setPreferredSize(new Dimension(WIDTH, HEIGHT+25)); 	//Setting size of the frame, +25 added for menu bar, 4 for 2mm borders....
-		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	//Telling the frame to actually exit when the cross is pressed
-		frame.setLocationRelativeTo(null);	//sets frame in middle of screen
+
+		//set frame in middle of screen
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		frame.setLocation((screenSize.width - WIDTH)/2, (screenSize.height - HEIGHT)/2);
+
 		frame.setResizable(false);	// user cannot resize frame
-		Dimension d = frame.getSize();
-		
+
 		TetrisMain tetrisMain = new TetrisMain();
-		frame.getContentPane().add(tetrisMain, BorderLayout.CENTER);
+//		frame.getContentPane().add(tetrisMain, BorderLayout.CENTER);	//moved to start new game method
 		frame.setLayout(null);
 		tetrisMain.setPreferredSize(new Dimension(WIDTH, HEIGHT+25));	// set preffered size then pack instead of setbounds alone, allows removal of border
-		
 		tetrisMain.setBounds(0,25,WIDTH,HEIGHT);	// starts at 25 to allow menu bar,
 		tetrisMain.mainFrame = frame;
 		
-		//tetrisMain.addKeyListener(tetrisMain);
 		//add menu bar
 		tetrisMain.constructMenuBar(frame);
+		//show main menu
+		tetrisMain.showMainMenu();
 		frame.pack();
 		frame.setVisible(true);
-		tetrisMain.start();
+		tetrisMain.init();
 	}
 	/**
 	 * Main running loop of program
 	 */
-	
 	public void run() {
-		//this.mainFrame.setFocusableWindowState(true);
-		init();
-		running = true;
+		this.requestFocusInWindow();
 		while(running) {
-				update();	// calls update method
-				BufferStrategy buff = getBufferStrategy();	//creates the method of buffering for the window
-				if(buff == null) {
-					createBufferStrategy(3);	// sets the buffering strategy as triple 
+
+				update();    // calls update method
+				BufferStrategy buff = getBufferStrategy();    //creates the method of buffering for the window
+				if (buff == null) {
+					createBufferStrategy(3);    // sets the buffering strategy as triple
 					continue;
 				}
 				Graphics2D background = (Graphics2D) buff.getDrawGraphics(); //graphics2d is a fundamental class for rendering 2-d shapes. takes user space co-ordinates
-				
+
 				render(background);
-				
-				if(cont.getPauseFlag()) {
+
+				if (cont.getPauseFlag()) {
 					drawPauseMessage(background);
 				}
-				
-				buff.show(); 
-			}
+
+				buff.show();
+		}
 		}
 
 	public void update() {
@@ -106,14 +96,38 @@ public class TetrisMain extends Canvas implements Runnable {
 		//System.out.println(keys);
 		
 	}
-	
-	/** 
-	 * starts a new game, initializing the required variables
-	 */
-	public void newGame() {
-		//Do fucking nothing....
+
+	public void  showMainMenu(){
+
+		//create panel to house main menu
+		JPanel menuPanel = new JPanel();
+		menuPanel.setLayout(new GridLayout(2,1,20,20));
+		menuPanel.setBounds(WIDTH/4,HEIGHT/2 - HEIGHT/8 +25,WIDTH /2,HEIGHT/4);
+
+		//create start button
+		JButton btnStart = new JButton("Start");
+		btnStart.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mainFrame.remove(menuPanel);
+				startNewGame();
+			}
+		});
+
+		JButton btnHS = new JButton("Highscores");
+
+
+		menuPanel.add(btnStart);
+		menuPanel.add(btnHS);
+
+
+
+		menuPanel.setVisible(true);
+		mainFrame.getContentPane().add(menuPanel);
+		mainFrame.pack();
+
 	}
-	
+
 	public void init() {
 		
 		Config conf = new Config(this);
@@ -144,7 +158,7 @@ public class TetrisMain extends Canvas implements Runnable {
 		//Initialize the grid object for the game
 		grid=  new TetrisGrid(WIDTH,HEIGHT,this.BLOCK_SIZE, this.tetrisBlocks);
 		// Initialize the block controller for the game
-		BlockController blockCtrl = new BlockController(this);
+		blockController = new BlockController(this);
 	}
 	/**
 	 * drawings is done by passing around the graphics 2D object
@@ -205,9 +219,32 @@ public class TetrisMain extends Canvas implements Runnable {
 	 * Method to start running of game
 	 */
 	public void start() {
-		Thread thread = new Thread(this);
+		running = false;
+		thread = new Thread(this);
 		thread.setPriority(Thread.MAX_PRIORITY);
+		running = true;
 		thread.start();
+	}
+
+	/**
+	 * method to start new round of the game
+	 */
+	public void startNewGame(){
+		// Clear the grid and reset the score
+		this.grid.resetGridForNewGame();
+
+		//change the JFrame content pane from showing the newGame Menu to showing the game.
+		mainFrame.getContentPane().add(this, BorderLayout.CENTER);
+		this.setPreferredSize(new Dimension(WIDTH, HEIGHT+25));	// set preffered size then pack instead of setbounds alone, allows removal of border
+		this.setBounds(0,25,WIDTH,HEIGHT);	// starts at 25 to allow menu bar,
+		mainFrame.revalidate();
+		mainFrame.pack();
+		running = true;
+
+
+		//start blockgeneration
+		this.blockController.startBlockGeneration();
+		this.start();
 	}
 	
 	/**
@@ -233,7 +270,7 @@ public class TetrisMain extends Canvas implements Runnable {
 				JMenuItem newGame = new JMenuItem("New Game");
 				newGame.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						newGame();
+						startNewGame();
 						System.out.println("Starting new game...");
 					}
 				});
@@ -278,9 +315,8 @@ public class TetrisMain extends Canvas implements Runnable {
 					}
 				});
 				file.add(config);
-				
-				
-				return;
+
+
 	}
 	
 	/**
