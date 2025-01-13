@@ -10,7 +10,6 @@ import java.util.Map;
 
 import javax.swing.*;
 
-import org.w3c.dom.css.Rect;
 
 public class TetrisMain extends Canvas implements Runnable {
 
