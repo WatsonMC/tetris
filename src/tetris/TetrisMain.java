@@ -68,15 +68,23 @@ public class TetrisMain extends Canvas implements Runnable {
 	 */
 	public void run() {
 		this.requestFocusInWindow();
+		buff = getBufferStrategy();    //creates the method of buffering for the window
+		if (buff == null) {
+			createBufferStrategy(3);    // sets the buffering strategy as triple
+		}
+
+		buff.show();
+		background = (Graphics2D) buff.getDrawGraphics();
+
 		while(running) {
 
 				update();    // calls update method
-				buff = getBufferStrategy();    //creates the method of buffering for the window
-				if (buff == null) {
-					createBufferStrategy(3);    // sets the buffering strategy as triple
-					continue;
-				}
-				background = (Graphics2D) buff.getDrawGraphics(); //graphics2d is a fundamental class for rendering 2-d shapes. takes user space co-ordinates
+//				buff = getBufferStrategy();    //creates the method of buffering for the window
+//				if (buff == null) {
+//					createBufferStrategy(3);    // sets the buffering strategy as triple
+//					continue;
+//				}
+//				background = (Graphics2D) buff.getDrawGraphics(); //graphics2d is a fundamental class for rendering 2-d shapes. takes user space co-ordinates
 
 				render(background);
 
@@ -118,11 +126,8 @@ public class TetrisMain extends Canvas implements Runnable {
 
 		JButton btnHS = new JButton("Highscores");
 
-
 		menuPanel.add(btnStart);
 		menuPanel.add(btnHS);
-
-
 
 		menuPanel.setVisible(true);
 		mainFrame.getContentPane().add(menuPanel);
@@ -152,7 +157,6 @@ public class TetrisMain extends Canvas implements Runnable {
 		}
 		catch(IOException e)
 		{	
-			
 			System.out.println("Error loading image file");
 			System.exit(1);
 		}
@@ -259,11 +263,13 @@ public class TetrisMain extends Canvas implements Runnable {
 		running = false;
 		this.blockController.stopBlockGeneration();
 		for(int i =0; i<3;i++){
+			System.out.println("Randomly colouring blocks");
 			this.grid.drawGridRandomColours(background);
 			buff.show();
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
+				System.out.println("Runtime Exception");
                 throw new RuntimeException(e);
             }
         }
@@ -467,6 +473,16 @@ public class TetrisMain extends Canvas implements Runnable {
 		});
 		gameOver.setBounds(150,450,150,50);
 		testEnv.add(gameOver);
+
+
+		JButton fillScreen  = new JButton("fillScreen");
+		fillScreen.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				grid.fillMostOfGrid();
+			}
+		});
+		fillScreen.setBounds(300,450,150,50);
+		testEnv.add(fillScreen);
 		testEnv.setVisible(true);
 	}
 	

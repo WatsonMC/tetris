@@ -20,14 +20,17 @@ public class BlockController {
 
 	public BlockController(TetrisMain game) {
 		this.game = game;
-		scheduler =  Executors.newScheduledThreadPool(1);
 	}
 
 	/**
 	 * Stops block generation by stopping scheduler
 	 */
 	public void stopBlockGeneration(){
-		blockMvmntHandler.cancel(true);
+		blockMvmntHandler.cancel(false);
+		scheduler.shutdown();
+		while(!scheduler.isShutdown()){
+			System.out.println("Waiting for block generation shceduler to shutdown");
+		}
 	}
 
 	/**
@@ -36,7 +39,10 @@ public class BlockController {
 	public void startBlockGeneration(){
 		if(blockMvmntHandler != null){
 			stopBlockGeneration();
+			scheduler = null;
 		}
+		scheduler =  Executors.newScheduledThreadPool(1);
+
 		Runnable blockMvmnt =  new Runnable() {
 			public void run() {
 				if(!game.getCont().getPauseFlag()) {
@@ -79,6 +85,7 @@ public class BlockController {
 			}else {
 				//game over
 				System.out.println("Game Over");
+				game.gameOver();
 			}
 		}
 		//Add block to screen

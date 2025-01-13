@@ -94,6 +94,16 @@ public class TetrisGrid {
 		}
 	}
 
+	/**
+	 * Test helper function to fill the entire grid with blocks, to test game over functions
+	 */
+	public void fillMostOfGrid(){
+		for (int x = 1; x < this.WIDTH-1; x++) {
+			for (int y = 0; y < this.HEIGHT; y++) {
+				grid[y][x] = 1;
+			}
+		}
+	}
 
 	public void resetGridForNewGame() {
 		clearGrid();
