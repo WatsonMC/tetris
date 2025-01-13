@@ -28,6 +28,9 @@ public class TetrisMain extends Canvas implements Runnable {
 	private boolean running;	//used for new game/end game functionality
 	private boolean exitProgram = false;	//used to trigger exit of the main loop when end game pressed
 
+	private Graphics2D background;
+	private BufferStrategy buff;
+
 	private Thread thread;	//main game thread, want only one
 
 	private Controller cont;
@@ -69,12 +72,12 @@ public class TetrisMain extends Canvas implements Runnable {
 		while(running) {
 
 				update();    // calls update method
-				BufferStrategy buff = getBufferStrategy();    //creates the method of buffering for the window
+				buff = getBufferStrategy();    //creates the method of buffering for the window
 				if (buff == null) {
 					createBufferStrategy(3);    // sets the buffering strategy as triple
 					continue;
 				}
-				Graphics2D background = (Graphics2D) buff.getDrawGraphics(); //graphics2d is a fundamental class for rendering 2-d shapes. takes user space co-ordinates
+				background = (Graphics2D) buff.getDrawGraphics(); //graphics2d is a fundamental class for rendering 2-d shapes. takes user space co-ordinates
 
 				render(background);
 
@@ -230,6 +233,7 @@ public class TetrisMain extends Canvas implements Runnable {
 	 * method to start new round of the game
 	 */
 	public void startNewGame(){
+
 		// Clear the grid and reset the score
 		this.grid.resetGridForNewGame();
 
@@ -241,10 +245,30 @@ public class TetrisMain extends Canvas implements Runnable {
 		mainFrame.pack();
 		running = true;
 
-
 		//start blockgeneration
 		this.blockController.startBlockGeneration();
 		this.start();
+	}
+
+	/**
+	 * Called by BlockController when no new insertion location is found
+	 * - stops running
+	 * - flahses blocks random colours for 3 seconds
+	 * - Displays rectangle in middle with 'GAME OVER Press any key to continue'
+	 */
+	public void gameOver(){
+		running = false;
+		this.blockController.stopBlockGeneration();
+		for(int i =0; i<3;i++){
+			this.grid.drawGridRandomColours(background);
+			buff.show();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+		System.out.println("Testing");
 	}
 	
 	/**
@@ -434,6 +458,16 @@ public class TetrisMain extends Canvas implements Runnable {
 		});
 		clearGrid.setBounds(300,400,150,50);
 		testEnv.add(clearGrid);
+		testEnv.setVisible(true);
+
+		JButton gameOver  = new JButton("gameOver");
+		gameOver.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				gameOver();
+			}
+		});
+		gameOver.setBounds(150,450,150,50);
+		testEnv.add(gameOver);
 		testEnv.setVisible(true);
 	}
 	
