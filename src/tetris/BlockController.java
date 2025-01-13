@@ -21,21 +21,6 @@ public class BlockController {
 	public BlockController(TetrisMain game) {
 		this.game = game;
 		scheduler =  Executors.newScheduledThreadPool(1);
-		
-//		Runnable blockMvmnt =  new Runnable() {
-//			public void run() {
-//				if(!game.getCont().getPauseFlag()) {
-//					if(!game.getGrid().checkGridHasBlock()) {
-//						insertNewBlock();
-//						System.out.println("new block added to game");
-//					}
-//					else{
-//						moveBlock();
-//					}
-//				}
-//			}
-//		};
-//		ScheduledFuture<?> blockMvmntHandler = scheduler.scheduleAtFixedRate(blockMvmnt, 1000, game.gameSpeed, TimeUnit.MILLISECONDS );
 	}
 
 	/**

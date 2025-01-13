@@ -1,10 +1,10 @@
 Game mechanics:
-- pause game functionality
+- pause game functionality - DONE (Partial)
 
 
 Game flow:
-- New game functionality
-- Game over functionality
+- New game functionality -> DONE
+- Game over functionality -> debugging required
 - Highscore functionality
 
 
