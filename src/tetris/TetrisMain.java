@@ -17,6 +17,7 @@ public class TetrisMain extends Canvas implements Runnable {
 	private static final Integer HEIGHT = 600;
 	private static final Integer HS_WIDTH = 300;
 	private static final Integer HS_HEIGHT = 500;
+	private static final Integer BORDER_WIDTH = 5;
 	public static int gameSpeed = 500;
 	private Image[] tetrisBlocks;
 	private final int BLOCK_SIZE = 25;
@@ -24,6 +25,8 @@ public class TetrisMain extends Canvas implements Runnable {
 	private RandomBlockGenerator blockGenerator;
 	private Block testBlock;	//testing
 	private JFrame mainFrame;
+	private JPanel gamePanel;
+
 	private boolean running;	//used for new game/end game functionality
 	private boolean gameOver = false;	//used to trigger exit of the main loop when end game pressed
 
@@ -39,26 +42,29 @@ public class TetrisMain extends Canvas implements Runnable {
 	public static void main(String [] args) {
 		//creating frame for game
 		JFrame frame = new JFrame("Tetris");	//creating the JFrame with the name Trtris
-		frame.getContentPane().setPreferredSize(new Dimension(WIDTH, HEIGHT+25)); 	//Setting size of the frame, +25 added for menu bar, 4 for 2mm borders....
+		frame.getContentPane().setPreferredSize(new Dimension(WIDTH+2*BORDER_WIDTH, HEIGHT+25 +2*BORDER_WIDTH)); 	//Setting size of the frame, +25 added for menu bar, 4 for 2mm borders....
+		frame.getContentPane().setBackground(Color.GRAY);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	//Telling the frame to actually exit when the cross is pressed
 
 		//set frame in middle of screen
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		frame.setLocation((screenSize.width - WIDTH)/2, (screenSize.height - HEIGHT)/2);
 
+		//Set frame options
 		frame.setResizable(false);	// user cannot resize frame
-
-		TetrisMain tetrisMain = new TetrisMain();
-//		frame.getContentPane().add(tetrisMain, BorderLayout.CENTER);	//moved to start new game method
 		frame.setLayout(null);
-		tetrisMain.setPreferredSize(new Dimension(WIDTH, HEIGHT+25));	// set preffered size then pack instead of setbounds alone, allows removal of border
-		tetrisMain.setBounds(0,25,WIDTH,HEIGHT);	// starts at 25 to allow menu bar,
+
+		//create the game and define its size
+		TetrisMain tetrisMain = new TetrisMain();
+		tetrisMain.setBounds(0,0,WIDTH,HEIGHT);	// starts at 25 to allow menu bar,
 		tetrisMain.mainFrame = frame;
 		
 		//add menu bar
 		tetrisMain.constructMenuBar(frame);
+
 		//show main menu
 		tetrisMain.showMainMenu();
+
 		frame.pack();
 		frame.setVisible(true);
 		tetrisMain.init();
@@ -109,7 +115,9 @@ public class TetrisMain extends Canvas implements Runnable {
 
 	public void  showMainMenu(){
 		System.out.println("Show Main Menu called");
-//		mainFrame.getContentPane().remove(this); This currently removes the menubar as well as the game surface. Think I want to put the game on it's own content JPanel perhapsd
+		if(gamePanel != null){		mainFrame.getContentPane().remove(gamePanel);}
+
+//		mainFrame.getContentPane().remove(this); //This currently removes the menubar as well as the game surface. Think I want to put the game on it's own content JPanel perhapsd
 
 		//Set gameover flag false
 		gameOver = false;
@@ -117,7 +125,7 @@ public class TetrisMain extends Canvas implements Runnable {
 		//create panel to house main menu
 		JPanel menuPanel = new JPanel();
 		menuPanel.setLayout(new GridLayout(2,1,20,20));
-		menuPanel.setBounds(WIDTH/4,HEIGHT/2 - HEIGHT/8 +25,WIDTH /2,HEIGHT/4);
+		menuPanel.setBounds(WIDTH/4 + BORDER_WIDTH,HEIGHT/2 - HEIGHT/8 +25 + BORDER_WIDTH,WIDTH /2,HEIGHT/4);
 
 		//create start button
 		JButton btnStart = new JButton("Start");
@@ -135,30 +143,26 @@ public class TetrisMain extends Canvas implements Runnable {
 		menuPanel.add(btnHS);
 
 		menuPanel.setVisible(true);
-		mainFrame.getContentPane().removeAll();
+//		mainFrame.getContentPane().removeAll();
 		mainFrame.getContentPane().add(menuPanel);
 		mainFrame.pack();
 
 	}
 
 	public void init() {
-		
-		Config conf = new Config(this);
-		this.conf = conf;
-		
+		//create config
+		conf = new Config(this);
+
 		//create the controller object
-		Controller  cont = new Controller(this,this.conf);
-		this.cont = cont;
+		cont = new Controller(this,this.conf);
+
 		//create the block generator object
-		RandomBlockGenerator b= new RandomBlockGenerator();
-		this.blockGenerator = b;
-	
-		
+		blockGenerator = new RandomBlockGenerator();
+
 		this.addKeyListener(cont);	//The keylistener for this canvas is going to be exclusively held in the controller class
 		
 		requestFocus();
 		try{
-			
 			tetrisBlocks = ImageLoader.loadImage("/tetris.png",25);
 		}
 		catch(IOException e)
@@ -170,8 +174,10 @@ public class TetrisMain extends Canvas implements Runnable {
 		//Initialize the grid object for the game
 		grid=  new TetrisGrid(WIDTH,HEIGHT,this.BLOCK_SIZE, this.tetrisBlocks);
 		// Initialize the block controller for the game
+
 		blockController = new BlockController(this);
 	}
+
 	/**
 	 * drawings is done by passing around the graphics 2D object
 	 * @param g
@@ -191,7 +197,7 @@ public class TetrisMain extends Canvas implements Runnable {
 	 * Graphics object on which to draw the message
 	 */
 	public void drawGameOverMessage(Graphics2D g) {
-		String gameOverMessage = "GAME OVER\npress space to continue";
+		String gameOverMessage = "GAME OVER\nSPACE\n to continue";
 		int msgBoxWidth = WIDTH/2;
 		int msgBoxHeight = 200;
 			
@@ -269,9 +275,15 @@ public class TetrisMain extends Canvas implements Runnable {
 		this.grid.resetGridForNewGame();
 
 		//change the JFrame content pane from showing the newGame Menu to showing the game.
-		mainFrame.getContentPane().add(this, BorderLayout.CENTER);
-		this.setPreferredSize(new Dimension(WIDTH, HEIGHT+25));	// set preffered size then pack instead of setbounds alone, allows removal of border
-		this.setBounds(0,25,WIDTH,HEIGHT);	// starts at 25 to allow menu bar,
+		gamePanel = new JPanel();
+		gamePanel.setLayout(null);
+		gamePanel.add(this);
+		gamePanel.setVisible(true);
+		gamePanel.setBounds(BORDER_WIDTH,BORDER_WIDTH + 25,WIDTH ,HEIGHT+25 );	// starts at 25 to allow menu bar,
+		mainFrame.getContentPane().add(gamePanel);
+
+//		this.setPreferredSize(new Dimension(WIDTH, HEIGHT+25));	// set preffered size then pack instead of setbounds alone, allows removal of border
+//		this.setBounds(0,25,WIDTH,HEIGHT);	// starts at 25 to allow menu bar,
 		mainFrame.revalidate();
 		mainFrame.pack();
 		running = true;
@@ -290,8 +302,8 @@ public class TetrisMain extends Canvas implements Runnable {
 	public void gameOver(){
 		running = false;
 		this.blockController.stopBlockGeneration();
-		for(int i =0; i<4;i++){
-			if(i<3){
+		for(int i =0; i<10;i++){
+			if(i<9){
 				System.out.println("Randomly colouring blocks");
 				this.grid.drawGridRandomColours(background);
 				buff.show();
@@ -300,7 +312,7 @@ public class TetrisMain extends Canvas implements Runnable {
 				buff.show();
 			}
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(200);
 			} catch (InterruptedException e) {
 				System.out.println("Runtime Exception");
 				throw new RuntimeException(e);
@@ -319,8 +331,8 @@ public class TetrisMain extends Canvas implements Runnable {
 		
 				// creating menu bar
 				JMenuBar menuBar = new JMenuBar();
-				menuBar.setBounds(0,0,WIDTH,25);
-				frame.getContentPane().add(menuBar,BorderLayout.CENTER);
+				menuBar.setBounds(0,0,WIDTH + 2*BORDER_WIDTH,25);
+				frame.getContentPane().add(menuBar);
 				
 				
 				//creating the menu options
@@ -378,8 +390,6 @@ public class TetrisMain extends Canvas implements Runnable {
 					}
 				});
 				file.add(config);
-
-
 	}
 	
 	/**
