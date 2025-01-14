@@ -25,7 +25,7 @@ public class TetrisMain extends Canvas implements Runnable {
 	private Block testBlock;	//testing
 	private JFrame mainFrame;
 	private boolean running;	//used for new game/end game functionality
-	private boolean exitProgram = false;	//used to trigger exit of the main loop when end game pressed
+	private boolean gameOver = false;	//used to trigger exit of the main loop when end game pressed
 
 	private Graphics2D background;
 	private BufferStrategy buff;
@@ -68,13 +68,13 @@ public class TetrisMain extends Canvas implements Runnable {
 	 */
 	public void run() {
 		this.requestFocusInWindow();
-		buff = getBufferStrategy();    //creates the method of buffering for the window
 		if (buff == null) {
 			createBufferStrategy(3);    // sets the buffering strategy as triple
 		}
-
-		buff.show();
+		buff = getBufferStrategy();    //creates the method of buffering for the window
+		buff.show();	// feels so dirty to call buff.show() twice like this.
 		background = (Graphics2D) buff.getDrawGraphics();
+		buff.show();
 
 		while(running) {
 
@@ -108,6 +108,11 @@ public class TetrisMain extends Canvas implements Runnable {
 	}
 
 	public void  showMainMenu(){
+		System.out.println("Show Main Menu called");
+//		mainFrame.getContentPane().remove(this); This currently removes the menubar as well as the game surface. Think I want to put the game on it's own content JPanel perhapsd
+
+		//Set gameover flag false
+		gameOver = false;
 
 		//create panel to house main menu
 		JPanel menuPanel = new JPanel();
@@ -130,6 +135,7 @@ public class TetrisMain extends Canvas implements Runnable {
 		menuPanel.add(btnHS);
 
 		menuPanel.setVisible(true);
+		mainFrame.getContentPane().removeAll();
 		mainFrame.getContentPane().add(menuPanel);
 		mainFrame.pack();
 
@@ -180,16 +186,16 @@ public class TetrisMain extends Canvas implements Runnable {
 	}
 	
 	/**
-	 * Method to draw an un-interactable textbox to tell user game is paused
+	 * Method to draw an un-interactable textbox to tell user game is over, and press space to return to main menu
 	 * @param g
 	 * Graphics object on which to draw the message
 	 */
-	public void drawPauseMessage(Graphics2D g) {
-		String pauseMessage = "Game paused, press\n"+ conf.getPause() + "\nto continue";
+	public void drawGameOverMessage(Graphics2D g) {
+		String gameOverMessage = "GAME OVER\npress space to continue";
 		int msgBoxWidth = WIDTH/2;
 		int msgBoxHeight = 200;
 			
-		g.setColor(Color.WHITE);
+		g.setColor(Color.RED);
 		g.fillRect(WIDTH/2 - (msgBoxWidth+10)/2, HEIGHT/2 - (msgBoxHeight+10)/2, msgBoxWidth+10, msgBoxHeight+10);
 		g.setColor(Color.DARK_GRAY);
 		
@@ -197,6 +203,28 @@ public class TetrisMain extends Canvas implements Runnable {
 		g.setColor(Color.WHITE);
 		Font messageFont = new Font("Calibri", Font.PLAIN, 24);
 		
+		int i = 0;
+		Rectangle messageArea = new Rectangle(msgBoxWidth, msgBoxHeight);
+		for(String s: gameOverMessage.split("\n")) {
+			messageArea.setLocation(WIDTH/2-msgBoxWidth/2 , HEIGHT/2 -msgBoxHeight+i*msgBoxHeight/3);
+			drawCenteredString(g, s, messageArea, messageFont);
+			i++;
+		}
+	}
+
+	public void drawPauseMessage(Graphics2D g) {
+		String pauseMessage = "Game paused, press\n"+ conf.getPause() + "\nto continue";
+		int msgBoxWidth = WIDTH/2;
+		int msgBoxHeight = 200;
+
+		g.setColor(Color.WHITE);
+		g.fillRect(WIDTH/2 - (msgBoxWidth+10)/2, HEIGHT/2 - (msgBoxHeight+10)/2, msgBoxWidth+10, msgBoxHeight+10);
+		g.setColor(Color.DARK_GRAY);
+
+		g.fillRect(WIDTH/2 - (msgBoxWidth)/2, HEIGHT/2 - (msgBoxHeight/2), msgBoxWidth, msgBoxHeight);
+		g.setColor(Color.WHITE);
+		Font messageFont = new Font("Calibri", Font.PLAIN, 24);
+
 		int i = 0;
 		Rectangle messageArea = new Rectangle(msgBoxWidth, msgBoxHeight);
 		for(String s: pauseMessage.split("\n")) {
@@ -236,7 +264,7 @@ public class TetrisMain extends Canvas implements Runnable {
 	 * method to start new round of the game
 	 */
 	public void startNewGame(){
-
+		System.out.println("Start New Game called");
 		// Clear the grid and reset the score
 		this.grid.resetGridForNewGame();
 
@@ -262,18 +290,24 @@ public class TetrisMain extends Canvas implements Runnable {
 	public void gameOver(){
 		running = false;
 		this.blockController.stopBlockGeneration();
-		for(int i =0; i<3;i++){
-			System.out.println("Randomly colouring blocks");
-			this.grid.drawGridRandomColours(background);
-			buff.show();
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
+		for(int i =0; i<4;i++){
+			if(i<3){
+				System.out.println("Randomly colouring blocks");
+				this.grid.drawGridRandomColours(background);
+				buff.show();
+			}else{
+				this.drawGameOverMessage(background);
+				buff.show();
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
 				System.out.println("Runtime Exception");
-                throw new RuntimeException(e);
-            }
+				throw new RuntimeException(e);
+			}
         }
-		System.out.println("Testing");
+		buff.show();	//this feels dirty but with triple buffering I have to force it from back to mid then to front
+		gameOver = true;
 	}
 	
 	/**
@@ -435,12 +469,11 @@ public class TetrisMain extends Canvas implements Runnable {
 		jbTestShape.setBounds(300,100,150,50);
 		testEnv.add(jbTestShape);
 		
-		JButton moveLeft = new JButton("MoveLeft");
+		JButton moveLeft = new JButton("TestButton");
 				
 		moveLeft.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("moving current block Left");
-				grid.currentBlock.moveLeft();
+				drawGameOverMessage(background);
 			}
 		});
 		moveLeft.setBounds(100,200,100,50);
@@ -565,10 +598,21 @@ public class TetrisMain extends Canvas implements Runnable {
 	protected TetrisGrid getGrid() {
 		return this.grid;
 	}
-	
+
+	/**
+	 * Getter for controller object
+	 * @return
+	 */
 	protected Controller getCont() {
 		return this.cont;
 	}
+
+	/**
+	 * Getter for gameOver flag
+	 * @return
+	 */
+	protected boolean checkGameOver(){return gameOver;}
+
 	
 	
 }

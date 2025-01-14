@@ -55,6 +55,12 @@ public class Controller implements KeyListener {
 		else if(pressedKey.equals(conf.getPause())) {
 			System.out.println("Pause pressed");
 		}
+		else if(pressedKey.equals("Space")){
+			System.out.println("Space Pressed");
+			if(game.checkGameOver()){
+				game.showMainMenu();
+			}
+		}
 
 	}
 	
@@ -89,7 +95,6 @@ public class Controller implements KeyListener {
 		else if(releasedKey.equals(conf.getPause())) {
 			System.out.println("Pause pressed");
 			pause = togglePauseFlag();
-
 		}
 	}
 	
