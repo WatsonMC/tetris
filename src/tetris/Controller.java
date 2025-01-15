@@ -15,25 +15,21 @@ public class Controller implements KeyListener {
 		this.conf = conf;
 	}
 	public void  keyPressed(KeyEvent e) {
-		//System.out.println("yes fuckwit a key was typed");
-		
-		
 		//get presed key
 		String pressedKey = KeyEvent.getKeyText(e.getKeyCode());
-		//System.out.println(pressedKey);
-		
+
 		//Set flags  true when key released
 		if(pressedKey.equals(conf.getLeft())) {
 			System.out.println("Left pressed");
 			left = true;
-			if(!getPauseFlag()) {
+			if(!getPauseFlag()&& game.getGrid().getCurrentBlock()!=null) {
 				game.getGrid().getCurrentBlock().moveLeft();
 			}
 		}
 		else if(pressedKey.equals(conf.getRight())) {
 			System.out.println("Right pressed");
 			right = true;
-			if(!getPauseFlag()) {
+			if(!getPauseFlag() && game.getGrid().getCurrentBlock()!=null) {
 				game.getGrid().getCurrentBlock().moveRight();
 			}
 		}
@@ -41,14 +37,14 @@ public class Controller implements KeyListener {
 			System.out.println("Up pressed");
 			up = true;
 			//TODO change to rotate
-			if(!getPauseFlag()) {
+			if(!getPauseFlag()&& game.getGrid().getCurrentBlock()!=null) {
 				game.getGrid().getCurrentBlock().rotateBlock();
 			}
 		}
 		else if(pressedKey.equals(conf.getDown())) {
 			System.out.println("Down pressed");
 			down = true;
-			if(!getPauseFlag()) {
+			if(!getPauseFlag()&& game.getGrid().getCurrentBlock()!=null) {
 				game.getGrid().getCurrentBlock().moveDown();
 			}
 		}
@@ -115,16 +111,16 @@ public class Controller implements KeyListener {
 	 * -------------------------------
 	 */
 	public boolean getUpFlag() {
-		return new Boolean(up);
+		return  this.up;
 	}
 	public boolean getDownFlag() {
-		return new Boolean(down);
+		return (down);
 	}
 	public boolean getLeftFlag() {
-		return new Boolean(left);
+		return (left);
 	}
 	public boolean getRightFlag() {
-		return new Boolean(right);
+		return  (right);
 	}
 	public boolean getPauseFlag() {
 		return new Boolean(pause);

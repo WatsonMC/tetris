@@ -18,6 +18,8 @@ public class BlockController {
 	private ScheduledFuture<?> blockMvmntHandler;
 	private ScheduledExecutorService scheduler;
 
+	private Block nextBlock;
+
 	public BlockController(TetrisMain game) {
 		this.game = game;
 	}
@@ -73,7 +75,10 @@ public class BlockController {
 	private void insertNewBlock() {
 		//Select the block type to be added
 		//Create block
-		Block newBlock  = RandomBlockGenerator.getRandomBlock(game.getGrid());
+		if(nextBlock == null){
+			nextBlock = RandomBlockGenerator.getRandomBlock(game.getGrid());
+		}
+		Block newBlock = new Block(nextBlock);
 		if(game.getGrid().checkMove(newBlock, newBlock.getRow(), newBlock.getCol())) {
 			game.getGrid().addBlock(newBlock);
 			System.out.println("block created");
@@ -88,6 +93,10 @@ public class BlockController {
 				game.gameOver();
 			}
 		}
+		newBlock.insertBlock();
+		nextBlock = RandomBlockGenerator.getRandomBlock(game.getGrid());
+		game.updateNextBlockCanvas();
+		//TODO add call to update sidebar with new block here
 		//Add block to screen
 	}
 	
@@ -114,5 +123,13 @@ public class BlockController {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Getter for next block
+	 * @return next block object or null
+	 */
+	public Block getNextBlock(){
+		return this.nextBlock;
 	}
 }

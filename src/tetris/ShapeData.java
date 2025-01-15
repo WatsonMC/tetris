@@ -39,7 +39,6 @@ public class ShapeData {
 	 * @param colourIndex
 	 */
 	
-	
 	public ShapeData(String name, String fileName, int defaultState, int colourIndex) {
 		
 		this.name = name;

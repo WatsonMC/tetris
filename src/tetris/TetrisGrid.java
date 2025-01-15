@@ -18,7 +18,7 @@ public class TetrisGrid {
 	private Image[] tetrisBlocks;
 	private ScoreHandler scoreHldr;
 
-	public Block currentBlock;
+	private Block currentBlock;
 
 	/**
 	 * REP
@@ -108,7 +108,7 @@ public class TetrisGrid {
 	public void resetGridForNewGame() {
 		clearGrid();
 		scoreHldr.resetScore();
-		testGenRandomBlox();
+//		testGenRandomBlox();
 
 	}
 
