@@ -19,3 +19,6 @@ Misc:
 
 Bugs:
 HOlding down when block hits bottom and new one generated causes error messages
+holding down permannently causes blocks to be duplicated
+collision detection on left hand side of blocks sometimes spuriously detects side touching blocks as collided
+

@@ -22,7 +22,6 @@ public class Block {
 	public Block(TetrisGrid grid, int insertRow, int insertCol, ShapeData shape) {
 		//constructs the block shape
 		// generates the required image blocks,aseembling them in some way which can be used
-		// generates the required image blocks,aseembling them in some way which can be used
 		// saves that information privately
 		// grid is the object on which to draw the shape
 		this.rowPosn = insertRow;
@@ -32,6 +31,20 @@ public class Block {
 		this.grid = grid;
 		this.setShapeData();
 		insertBlock();
+	}
+
+	/**
+	 * Constructor to allow copying of one blocks rep to another. Creates identical block
+	 * @param copyBlock
+	 */
+	public Block(Block copyBlock){
+		this.rowPosn = copyBlock.rowPosn;
+		this.colPosn = copyBlock.colPosn;
+		this.shape = copyBlock.shape;
+		this.grid= copyBlock.grid;
+		this.rotationalState = 0;
+		this.setShapeData();
+//		insertBlock();
 	}
 	
 	private void setShapeData() {
@@ -59,18 +72,14 @@ public class Block {
 	 * Adds block to the grid object
 	 */
 	public void insertBlock() {
-		grid.currentBlock = this;
 		drawn = true;	//Drawn really means inserted into the block at all
 		//not necessarily that at this specific instant the block is on the canvas
-
 	}
 	
 	
 	/**
 	 * Method to move block left from current location by 1 unit
 	 * If block is not already on grid, will add it in a position 1 left of initial positions
-	 * 
-	 *
 	 */
 	public void moveLeft() {
 		if(!drawn) {
